@@ -1,6 +1,8 @@
 Feature: Atualizar base de dados com os dados do SIGAA
 
-    Eu como Administrador. Quero atualizar a base de dados já existente com os dados atuais do SIGAA. A fim de corrigir a base de dados do sistema.
+    - Eu como Administrador
+    - Quero atualizar a base de dados já existente com os dados atuais do SIGAA
+    - A fim de corrigir a base de dados do sistema
 
     Scenario: Alterar o valor de um dado no sistema (happy path)
         Given que o Administrador está logado no sistema

@@ -1,6 +1,8 @@
 Feature: Visualização de resultados dos formulários
 
-    Eu como Administrador. Quero visualizar os formulários criados. A fim de poder gerar um relatório a partir das respostas.
+    - Eu como Administrador
+    - Quero visualizar os formulários criados
+    - A fim de poder gerar um relatório a partir das respostas
 
     Scenario: Visualizar formularios presentes no banco de dados (happy path)
         Given que o Administrador está logado no sistema

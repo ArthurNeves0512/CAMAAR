@@ -1,6 +1,8 @@
 Feature: criarTemplateDeFormulario
 
-    Eu como Administrador. Quero criar um template de formulário contendo as questões do formulário. A fim de gerar formulários de avaliações para avaliar o desempenho das turmas.
+    - Eu como Administrador
+    - Quero criar um template de formulário contendo as questões do formulário
+    - A fim de gerar formulários de avaliações para avaliar o desempenho das turmas
 
     Scenario: Criar um novo template de formulario com questões (happy path)
         Given que o Administrador está logado no sistema
