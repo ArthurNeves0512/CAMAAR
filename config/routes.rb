@@ -8,7 +8,19 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
+  root 'questionnaires#index'
   # Defines the root path route ("/")
   # root "posts#index"
+  resources :answers
+  resources :classrooms
+  resources :coordinators
+  resources :departments
+  resources :enrollmets
+  resources :questions
+  resources :questionnaires
+  resources :question_options
+  resources :subjects
+  resources :submissions
+  resources :templates
+  resources :users
 end
