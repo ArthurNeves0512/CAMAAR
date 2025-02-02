@@ -1,0 +1,7 @@
+<h1>Templates</h1>
+
+<% @templates.each do |template| %>
+  <p><%= link_to template.name, admin_template_path(template) %></p>
+<% end %>
+
+<%= link_to 'Voltar', admin_root_path, class: 'btn' %>

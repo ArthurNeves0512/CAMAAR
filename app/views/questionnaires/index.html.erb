@@ -1,1 +1,5 @@
-<h2>Questionários</h2>
+<h1>Lista de Questionários</h1>
+
+<% @questionnaires.each do |questionnaire| %>
+  <p><%= link_to questionnaire.name, questionnaire_path(questionnaire) %></p>
+<% end %>

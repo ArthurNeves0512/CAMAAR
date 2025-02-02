@@ -1,0 +1,14 @@
+<h1>Importar Dados</h1>
+
+<%= form_with url: admin_imports_path, method: :post, local: true, multipart: true do |form| %>
+  <div>
+    <%= form.label :file, "Selecionar Arquivo CSV" %>
+    <%= form.file_field :file %>
+  </div>
+
+  <div>
+    <%= form.submit "Importar", class: "btn" %>
+  </div>
+<% end %>
+
+<%= link_to "Voltar", admin_root_path, class: "btn" %>

@@ -1,1 +1,5 @@
-<h2>Templates</h2>
+<h1>Lista de Templates</h1>
+
+<% @templates.each do |template| %>
+  <p><%= link_to template.name, template_path(template) %></p>
+<% end %>

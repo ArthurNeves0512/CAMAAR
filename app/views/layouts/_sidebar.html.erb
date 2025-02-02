@@ -1,0 +1,9 @@
+<div class="w-64 bg-gray-200 p-4 fixed h-full left-0 top-0 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:relative">
+  <button id="close-menu" class="md:hidden absolute top-4 right-4 text-xl">×</button>
+  <ul class="space-y-3">
+    <li><%= link_to "Questionários", questionnaires_path, class: "block py-3 px-5 text-lg font-medium hover:bg-gray-300 rounded-lg" %></li>
+    <% if current_user.admin? %>
+      <li><%= link_to "Gerenciar (Admin)", admin_root_path, class: "block py-3 px-5 text-lg font-medium hover:bg-gray-300 rounded-lg" %></li>
+    <% end %>
+  </ul>
+</div>
