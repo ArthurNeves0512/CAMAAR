@@ -11,14 +11,14 @@ Rails.application.routes.draw do
     namespace :admin do
       root to: 'dashboard#index'
       resources :questionnaires do
-      resources :submissions, only: [:index]
+        resources :submissions, only: [:index]
       end
       resources :templates
       resources :imports, only: [:new, :create]
     end
 
     resources :questionnaires, only: [:index, :show] do
-    resources :submissions, only: [:new, :create]
+      resources :submissions, only: [:new, :create]
     end
   end
 
@@ -26,4 +26,5 @@ Rails.application.routes.draw do
   resources :subjects, only: [:index, :show]
 
   get "up" => "rails/health#show", as: :rails_health_check
+  get 'exportar', to: 'reports#export_to_csv'
 end

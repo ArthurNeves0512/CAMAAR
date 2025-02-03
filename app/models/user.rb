@@ -22,4 +22,14 @@ class User < ApplicationRecord
   validates :nome, 
     presence: { message: " é obrigatório" }, 
     length: { maximum: 100 }
+
+    def self.find_for_database_authentication(warden_conditions)
+      conditions = warden_conditions.dup
+      login = conditions.delete(:email).downcase
+    
+      # Busca por email OU matrícula
+      where(conditions).where(
+        ["lower(email) = :value OR lower(matricula) = :value", { value: login }]
+      ).first
+    end
 end

@@ -1,0 +1,31 @@
+pt-BR:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "não pode ficar em branco"
+              invalid: "não é válido"
+            password:
+              blank: "não pode ficar em branco"
+            matricula:
+              blank: "é obrigatória"
+            nome:
+              blank: "é obrigatório"
+            password_confirmation:
+              confirmation: "não é igual a Password"
+
+  errors:
+    messages:
+      not_saved: "O cadastro não pôde ser concluído devido a %{count} erro(s):"
+      confirmation: "não é igual a %{attribute}"
+      invalid: "não é válido"
+
+  devise:
+    failure:
+      unauthenticated: "Você precisa fazer login ou se registrar antes de continuar."
+    registrations:
+      signed_up: "Cadastro realizado com sucesso!"
+      updated: "Sua conta foi atualizada com sucesso."
+      destroyed: "Sua conta foi excluída com sucesso. Sentiremos sua falta!"

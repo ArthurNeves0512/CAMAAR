@@ -1,7 +1,31 @@
-<h1>Templates</h1>
-
-<% @templates.each do |template| %>
-  <p><%= link_to template.name, admin_template_path(template) %></p>
-<% end %>
-
+<div class="container">
+  <h1>Templates Cadastrados</h1>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Público Alvo</th>
+        <th>Semestre</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @templates.each do |template| %>
+        <tr>
+          <td><%= template.name %></td>
+          <td><%= template.target_audience %></td>
+          <td><%= template.semester %></td>
+          <td>
+            <%= link_to 'Editar', edit_admin_template_path(template), class: 'btn btn-sm btn-primary' %>
+            <%= button_to 'Excluir', admin_template_path(template), 
+                method: :delete, 
+                class: 'btn btn-sm btn-danger',
+                data: { confirm: 'Tem certeza que deseja excluir este template?' } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 <%= link_to 'Voltar', admin_root_path, class: 'btn' %>
