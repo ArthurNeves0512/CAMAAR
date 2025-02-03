@@ -15,6 +15,14 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     click_button 'Entrar'
     expect(current_path).to eq(authenticated_root_path)
     expect(page).to have_link('Gerenciamento')
+    click_link 'Gerenciamento'
+    expect(current_path).to eq(admin_root_path)
+    expect(page).to have_content('Exportar csv')
+    click_link 'Exportar csv'
+    expect(current_path).to eq(exportar_path)
+
+
+
      end
 
 
