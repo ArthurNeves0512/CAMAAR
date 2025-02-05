@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.feature "Login no sistema", type: :feature do
   scenario "Login bem-sucedido com e-mail" do
-    user = User.create(nome:'andre',email: 'aluno1@email.com',matricula:'211020992',password:'senha123',password_confirmation:'senha123')
-    
+    user = User.create(nome: 'andre', email: 'andre1@email.com', matricula: '211020993', password: 'senha123', password_confirmation: 'senha123', role: 'student')
+
     visit root_path
     expect(page).to have_content('Bem-vindo ao Sistema de Questionários')
     click_link 'Login'
@@ -17,7 +17,7 @@ RSpec.feature "Login no sistema", type: :feature do
 
   
   scenario "Login bem-sucedido com matricula" do
-    user = User.create(nome: 'Andre', email: 'user@example.com', matricula: '311020992', password: 'senha123', password_confirmation: 'senha123')
+    user = User.create(nome: 'Andre', email: 'user@example.com', matricula: '311020992', password: 'senha123', password_confirmation: 'senha123',role:'student')
     
     visit root_path
     expect(page).to have_content('Bem-vindo ao Sistema de Questionários')
@@ -43,7 +43,7 @@ RSpec.feature "Login no sistema", type: :feature do
   end
   
   scenario "Professor adm acessa o sistema" do
-    user_adm = User.create(nome: 'Janilson', email: 'adm1@example.com', matricula: '2110320991', password: 'senha123', password_confirmation: 'senha123', role:2)
+    user_adm = User.create(nome: 'Janilson', email: 'adm1@example.com', matricula: '2110320991', password: 'senha123', password_confirmation: 'senha123', role:'admin')
     
     visit root_path
     expect(page).to have_content('Bem-vindo ao Sistema de Questionários')
@@ -57,7 +57,7 @@ RSpec.feature "Login no sistema", type: :feature do
   end
 
   scenario "Professor nao adm acessa o sistema" do
-    user_not_adm = User.create(nome:'Janilson', email: 'adm1@example.com', matricula: '2110320991', password: 'senha123', password_confirmation: 'senha123', role:1)
+    user_not_adm = User.create(nome:'Janilson', email: 'adm1@example.com', matricula: '2110320991', password: 'senha123', password_confirmation: 'senha123', role:0)
     
     visit root_path
     expect(page).to have_content('Bem-vindo ao Sistema de Questionários')

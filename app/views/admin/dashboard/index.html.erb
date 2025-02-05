@@ -1,6 +1,9 @@
 <div class="dashboard-buttons">
+    <%if flash[:alert]%>
+        <h1><%=flash[:alert]%></h1>
+    <%end%>
     <%= link_to 'Importar Dados', new_admin_import_path, class: 'btn01' %>
     <%= link_to 'Editar Templates', admin_templates_path, class: 'btn02' %>
     <%= link_to 'Enviar Formulários', admin_questionnaires_path, class: 'btn03' %>
-    <%= link_to 'Exportar csv', exportar_path %>
+    <%= link_to 'Exportar csv', admin_questionnaires_path %>
 </div>

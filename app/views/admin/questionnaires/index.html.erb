@@ -8,6 +8,10 @@
     </tr>
   </thead>
   <tbody>
+  
+  <% if flash[:alert] %>
+      <h1><%=flash[:alert]%></h1>
+    <%end%>
     <% @questionnaires.each do |questionnaire| %>
       <tr>
         <td><%= questionnaire.name %></td>
@@ -15,6 +19,9 @@
           <%= link_to 'Ver', admin_questionnaire_path(questionnaire) %> |
           <%= link_to 'Editar', edit_admin_questionnaire_path(questionnaire) %> |
           <%= link_to 'Deletar', admin_questionnaire_path(questionnaire), method: :delete, data: { confirm: 'Tem certeza?' } %>
+           <%= link_to 'Exportar dados', exportar_path(questionnaire) %>
+           
+           
         </td>
       </tr>
     <% end %>

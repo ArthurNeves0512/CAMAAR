@@ -26,5 +26,5 @@ Rails.application.routes.draw do
   resources :subjects, only: [:index, :show]
 
   get "up" => "rails/health#show", as: :rails_health_check
-  get 'exportar', to: 'reports#export_to_csv'
+  get 'exportar/:id', to: 'reports#export_to_csv', as: 'exportar'
 end

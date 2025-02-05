@@ -35,3 +35,5 @@
 
 # testing folder
 /_IGNORE
+
+/config/database.yml
