@@ -71,10 +71,19 @@ class Admin::ImportsController < ApplicationController
           subjectData.code = record.dig("code")
           subjectData.name = record.dig("name")
 
+          classData = ImportClasses.new
+          classData.classCode = record.dig("class", "classCode")
+          classData.semester = record.dig("class", "semester")
+
+          subjectData.add_turmas(classData)
+
           existing_subject = dataList.find { |d| d.code == subjectData.code }
           if existing_subject
-            # add name and turmas
-            existing_subject.name = subjectData.name
+            # check if already exists an turma with the same classCode
+            existing_turma = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
+            if !(existing_turma)
+              existing_subject.add_turmas(classData)
+            end
           else
             dataList.push(subjectData)
           end
@@ -88,6 +97,21 @@ class Admin::ImportsController < ApplicationController
       puts "Subject Code: #{subject.code} - Name: #{subject.name}"
       subject.turmas.each do |turma|
         puts "  Class Code: #{turma.classCode}, Semester: #{turma.semester}, Department Name: #{turma.dptoName}"
+      end
+    end
+
+    # use dataList to populate the database from Departaments > Subjects > Classrooms
+    dataList.each do |subject|
+      # Find or create the Department
+      if subject.turmas.empty?
+        next
+      end
+      department = Department.find_or_create_by(name: subject.turmas.first.dptoName)
+      # Find or create Subjects with the created Deparment
+      subject_record = Subject.find_or_create_by(code: subject.code, name: subject.name, department_id: department.id)
+      # Find or create the Classroom's from subject
+      subject.turmas.each do |turma|
+        Classroom.find_or_create_by(subject_id: subject_record.id, semester: turma.semester, code: turma.classCode)
       end
     end
 
