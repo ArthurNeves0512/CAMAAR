@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       end
       resources :templates
       resources :imports, only: [:new, :create]
+      resources :results, only: [:index]
     end
 
     resources :questionnaires, only: [:index, :show] do

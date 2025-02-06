@@ -1,0 +1,43 @@
+<div class="flex h-screen bg-gray-200">
+    <!-- Sidebar fixa -->
+    <div class="w-64 bg-white shadow-md h-full">
+        <%= render 'layouts/sidebar' %>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 flex flex-col items-center justify-center p-6">
+        <h1 class="text-2xl font-bold mb-4 text-center">Respostas para <%= @questionnaire.name %></h1>
+
+        <div class="w-full max-w-4xl overflow-x-auto bg-white shadow-md rounded-lg p-6">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-4 py-2">Usuário</th>
+                        <th class="border border-gray-300 px-4 py-2">Respostas</th>
+                        <th class="border border-gray-300 px-4 py-2">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @submissions.each do |submission| %>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 text-center"><%= submission.user.nome %></td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <% submission.questionnaire.answers.each do |answer| %>
+                                    <p><strong>Pergunta:</strong> <%= answer.question.text %></p>
+                                    <p><strong>Resposta:</strong> <%= answer.value %></p>
+                                    <hr>
+                                <% end %>
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                <%= submission.created_at.strftime("%d/%m/%Y %H:%M") %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+
+            <%= link_to "Gerar Relatório CSV", exportar_path(@questionnaire), 
+                class: "block mt-6 bg-green-500 text-white text-center py-3 px-6 rounded-lg hover:bg-green-600 w-full max-w-sm mx-auto" %>
+        </div>
+    </main>
+</div>

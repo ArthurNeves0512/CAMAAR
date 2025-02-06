@@ -10,10 +10,9 @@ module Users
       #   super
       # end
   
-      # DELETE /resource/sign_out
-      # def destroy
-      #   super
-      # end
+      #def destroy
+      #  super # Chama o comportamento padrão do Devise para o logout
+      #end
   
       protected
   

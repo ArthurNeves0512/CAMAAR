@@ -9,6 +9,5 @@ class QuestionnairesController < ApplicationController
     def show
       @questionnaire = Questionnaire.find(params[:id])
     end
-  
     # Adicione ações new, create, edit, update, destroy conforme necessário
   end

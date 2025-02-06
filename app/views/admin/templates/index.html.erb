@@ -1,31 +1,39 @@
-<div class="container">
-  <h1>Templates Cadastrados</h1>
-  
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Público Alvo</th>
-        <th>Semestre</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @templates.each do |template| %>
-        <tr>
-          <td><%= template.name %></td>
-          <td><%= template.target_audience %></td>
-          <td><%= template.semester %></td>
-          <td>
-            <%= link_to 'Editar', edit_admin_template_path(template), class: 'btn btn-sm btn-primary' %>
-            <%= button_to 'Excluir', admin_template_path(template), 
-                method: :delete, 
-                class: 'btn btn-sm btn-danger',
-                data: { confirm: 'Tem certeza que deseja excluir este template?' } %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="flex h-screen bg-gray-200">
+  <!-- Sidebar -->
+  <div class="w-64 bg-white shadow-md">
+      <%= render 'layouts/sidebar' %>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="flex flex-1 flex-col p-6">
+      <!-- Título -->
+      <h1 class="text-2xl font-bold mb-4">Gerenciamento - Templates</h1>
+
+      <!-- Grid de Templates -->
+      <div class="grid grid-cols-auto-fit gap-4">
+          <% @templates.each do |template| %>
+              <div class="bg-white p-4 rounded-lg shadow-md w-64">
+                  <h2 class="font-semibold text-lg"><%= template.name %></h2>
+                  <p class="text-sm text-gray-600"><%= template.semester %></p>
+
+                  <!-- Ações -->
+                  <div class="flex justify-end gap-2 mt-3">
+                      <%= link_to edit_admin_template_path(template), class: 'text-gray-600 hover:text-blue-600' do %>
+                          ✏️
+                      <% end %>
+                      <%= button_to admin_template_path(template), method: :delete, data: { confirm: 'Tem certeza que deseja excluir este template?' }, class: 'text-gray-600 hover:text-red-600' do %>
+                          🗑️
+                      <% end %>
+                  </div>
+              </div>
+          <% end %>
+
+          <!-- Card de Adicionar -->
+          <div class="bg-white p-4 rounded-lg shadow-md w-64 flex justify-center items-center">
+              <%= link_to new_admin_template_path, class: 'text-3xl text-gray-600 hover:text-blue-600' do %>
+                  +
+              <% end %>
+          </div>
+      </div>
+  </div>
 </div>
-<%= link_to 'Voltar', admin_root_path, class: 'btn' %>

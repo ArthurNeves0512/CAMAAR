@@ -5,6 +5,8 @@ class Admin::DashboardController < ApplicationController
   def index
     # Dados administrativos (ex: total de questionários)
     @questionnaires = Questionnaire.all
+    @templates = Template.all
+    @classrooms = Classroom.includes(subject: :department)
   end
 
 end

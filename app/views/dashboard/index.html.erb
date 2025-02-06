@@ -1,34 +1,76 @@
-<div class="flex h-screen">
+<div class="flex h-screen bg-gray-200">
   <!-- Sidebar -->
-  <%= render "layouts/sidebar" %>
+  <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
+    ☰ Menu
+  </button>
 
-  <!-- Conteúdo Principal -->
-  <main class="flex-1 p-6 transition-all duration-300 md:ml-64">
-    <!-- Botão para abrir o menu no mobile -->
-    <button data-action="click->sidebar#toggle" class="md:hidden bg-gray-700 text-white px-4 py-2 rounded mb-4">
-      ☰ Menu
-    </button>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <%= render 'layouts/sidebar' %>
 
-    <!-- Botões de navegação -->
-    <div class="mb-6">
-      <%= link_to "Questionários", questionnaires_path, class: "inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mb-4" %>
-      <% if current_user.admin? %>
-        <%= link_to "Gerenciamento", admin_root_path, class: "inline-block bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600" %>
-      <% end %>
-    </div>
-
-    <!-- Título -->
-    <h1 class="text-2xl font-bold mb-6">Lista de Questionários</h1>
-
-    <!-- Grid responsivo para os questionários -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <% @questionnaires.each do |questionnaire| %>
-        <div class="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition">
-          <h3 class="text-xl font-semibold mb-3 text-gray-900"><%= questionnaire.name %></h3>
-          <p class="text-gray-600 mb-4"><%= questionnaire.classroom_info %></p>
-          <%= link_to "Responder", new_questionnaire_submission_path(questionnaire), class: "mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition" %>
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 p-6 ml-64"><!-- margem esquerda para compensar a sidebar -->
+      <!-- Cabeçalho -->
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Avaliações</h1>
+        <div class="relative">
+          <input type="text" placeholder="Pesquisar..." class="border rounded-full px-4 py-2 pl-10">
+          <span class="absolute left-1 top-2 text-gray-400">🔍</span>
         </div>
-      <% end %>
-    </div>
-  </main>
+
+        <!-- Botão com dropdown para logout -->
+        <div class="relative inline-block text-left">
+          <!-- Botão que exibe o dropdown -->
+          <button type="button" onclick="toggleDropdown()"
+                  class="w-10 h-10 rounded-full bg-purple-800 flex items-center justify-center text-white font-bold hover:bg-purple-900 transition-colors focus:outline-none">
+            <%= current_user.nome[0].upcase %>
+          </button>
+
+          <!-- Dropdown oculto inicialmente -->
+          <div id="logoutDropdown" class="hidden absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+              <!-- Corrigido para utilizar o form_for e button_tag corretamente -->
+              <%= form_for(:destroy_user_session, url: destroy_user_session_path, method: :delete, html: { data: { confirm: 'Tem certeza que deseja sair?' } }) do %>
+                <%= button_tag 'Sair', class: 'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100', role: 'menuitem' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo dos questionários -->
+      <div class="flex flex-wrap justify-center gap-6">
+        <% @questionnaires.each do |questionnaire| %>
+          <div class="bg-white shadow-md rounded-lg p-6 border border-gray-300 max-w-xs w-full">
+            <h3 class="text-lg font-bold text-gray-900"><%= questionnaire.name %></h3>
+            <p class="text-sm text-gray-600">
+              <%= questionnaire.template.semester if questionnaire.template %>
+            </p>
+            <p class="text-sm font-semibold text-gray-800">
+              <% classroom = Classroom.find_by(id: questionnaire.classroom_info) %>
+              <% professor = classroom&.enrollments&.joins(:user)&.where(users: { role: 'professor' })&.first&.user %>
+              <%= professor ? professor.nome : "Professor não atribuído" %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </main>
+  </div>
 </div>
+
+<!-- Script para alternar a visibilidade do dropdown -->
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("logoutDropdown");
+    dropdown.classList.toggle("hidden");
+  }
+
+  // Opcional: fecha o dropdown ao clicar fora dele
+  window.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("logoutDropdown");
+    var button = e.target.closest("button");
+    if (!e.target.closest("#logoutDropdown") && !button) {
+      dropdown.classList.add("hidden");
+    }
+  });
+</script>
