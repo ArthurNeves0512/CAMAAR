@@ -1,9 +1,9 @@
 <div id="sidebar" class="w-64 bg-white h-full shadow-md p-4 fixed transform -translate-x-full transition-transform md:translate-x-0">
   <h2 class="text-lg font-bold text-gray-700">Menu</h2>
   <ul class="mt-4 space-y-2">
-    <li><%= link_to "Avaliações", authenticated_root_path, class:"block p-2 text-gray-700 hover:bg-gray-200 rounded" %></li>
+    <li><%= link_to "Avaliações", authenticated_root_path, class: "block p-2 text-gray-700 hover:bg-gray-200 rounded" %></li>
     <% if current_user.admin? %>
-      <li><%= link_to "Gerenciamento", admin_root_path, class:"block p-2 text-gray-700 hover:bg-gray-200 rounded" %></li>
+      <li><%= link_to "Gerenciamento", admin_root_path, class: "block p-2 text-gray-700 hover:bg-gray-200 rounded" %></li>
     <% end %>
   </ul>
 </div>

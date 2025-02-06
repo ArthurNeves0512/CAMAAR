@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-gray-200">
   <!-- Sidebar -->
   <div class="w-64 bg-white shadow-md">
-      <%= render 'layouts/sidebar' %>
+      <%= render "layouts/sidebar" %>
   </div>
 
   <!-- Conteúdo Principal -->
@@ -18,10 +18,10 @@
 
                   <!-- Ações -->
                   <div class="flex justify-end gap-2 mt-3">
-                      <%= link_to edit_admin_template_path(template), class: 'text-gray-600 hover:text-blue-600' do %>
+                      <%= link_to edit_admin_template_path(template), class: "text-gray-600 hover:text-blue-600" do %>
                           ✏️
                       <% end %>
-                      <%= button_to admin_template_path(template), method: :delete, data: { confirm: 'Tem certeza que deseja excluir este template?' }, class: 'text-gray-600 hover:text-red-600' do %>
+                      <%= button_to admin_template_path(template), method: :delete, data: { confirm: "Tem certeza que deseja excluir este template?" }, class: "text-gray-600 hover:text-red-600" do %>
                           🗑️
                       <% end %>
                   </div>
@@ -30,7 +30,7 @@
 
           <!-- Card de Adicionar -->
           <div class="bg-white p-4 rounded-lg shadow-md w-64 flex justify-center items-center">
-              <%= link_to new_admin_template_path, class: 'text-3xl text-gray-600 hover:text-blue-600' do %>
+              <%= link_to new_admin_template_path, class: "text-3xl text-gray-600 hover:text-blue-600" do %>
                   +
               <% end %>
           </div>

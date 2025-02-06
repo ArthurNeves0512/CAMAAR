@@ -2,8 +2,8 @@ class Admin::QuestionnairesController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!
 
-  protect_from_forgery with: :exception 
-  
+  protect_from_forgery with: :exception
+
   def index
     @questionnaires = Questionnaire.all
     @templates = Template.all

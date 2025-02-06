@@ -25,8 +25,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   end
 
   create_table "classrooms", force: :cascade do |t|
-    t.string "code", limit: 45
-    t.string "semester", limit: 45
+    t.string "code", limit: 45, null: false
+    t.string "semester", limit: 45, null: false
     t.bigint "subject_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -88,6 +88,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   create_table "subjects", force: :cascade do |t|
     t.string "name", limit: 45
     t.string "code", limit: 45
+    t.string "time", limit: 10
     t.bigint "department_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

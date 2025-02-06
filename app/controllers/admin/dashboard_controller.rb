@@ -8,5 +8,4 @@ class Admin::DashboardController < ApplicationController
     @templates = Template.all
     @classrooms = Classroom.includes(subject: :department)
   end
-
 end

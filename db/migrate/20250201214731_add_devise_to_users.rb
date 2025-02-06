@@ -9,16 +9,16 @@ class AddDeviseToUsers < ActiveRecord::Migration[8.0]
       t.string :role, default: "" # Exemplo: 'admin', 'professor', 'aluno'
 
       ## Devise padrão
-      t.string :email,              null: false, default: ""
+      t.string :email, null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
 
       ## Confirmação de conta (opcional)
-      t.string   :confirmation_token
+      t.string :confirmation_token
       t.datetime :confirmed_at
       t.datetime :confirmation_sent_at
 
       ## Reset de senha
-      t.string   :reset_password_token
+      t.string :reset_password_token
       t.datetime :reset_password_sent_at
 
       ## Lembrar de mim

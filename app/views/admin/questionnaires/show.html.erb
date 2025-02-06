@@ -3,6 +3,6 @@
 <p><strong>Nome:</strong> <%= @questionnaire.name %></p>
 <p><strong>Turma:</strong> <%= @questionnaire.classroom_info %></p>
 
-<%= link_to 'Voltar', admin_questionnaires_path, class: 'btn' %>
-<%= link_to 'Editar', edit_admin_questionnaire_path(@questionnaire), class: 'btn' %>
-<%= link_to 'Deletar', admin_questionnaire_path(@questionnaire), method: :delete, data: { confirm: 'Tem certeza?' }, class: 'btn' %>
+<%= link_to "Voltar", admin_questionnaires_path, class: "btn" %>
+<%= link_to "Editar", edit_admin_questionnaire_path(@questionnaire), class: "btn" %>
+<%= link_to "Deletar", admin_questionnaire_path(@questionnaire), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn" %>

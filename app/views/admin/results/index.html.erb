@@ -6,7 +6,7 @@
   
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <%= render 'layouts/sidebar' %>
+      <%= render "layouts/sidebar" %>
   
       <!-- Conteúdo Principal -->
       <main class="flex-1 p-6 ml-64"> <!-- Adicionando margem esquerda para compensar a sidebar -->
@@ -25,13 +25,13 @@
               </p>
               <p class="text-sm font-semibold text-gray-800">
                 <% classroom = Classroom.find_by(id: questionnaire.classroom_info) %>
-                <% professor = classroom&.enrollments&.joins(:user)&.where(users: { role: 'professor' })&.first&.user %>
+                <% professor = classroom&.enrollments&.joins(:user)&.where(users: { role: "professor" })&.first&.user %>
                 <%= professor ? professor.nome : "Professor não atribuído" %>
               </p>
   
               <!-- Botão para acessar o questionário -->
-              <%= link_to "Acessar", admin_questionnaire_submissions_path(questionnaire), 
-                class: "block mt-4 bg-green-500 text-white text-center py-2 px-4 rounded-md hover:bg-green-600" %>
+              <%= link_to "Acessar", admin_questionnaire_submissions_path(questionnaire),
+                          class: "block mt-4 bg-green-500 text-white text-center py-2 px-4 rounded-md hover:bg-green-600" %>
             </div>
           <% end %>
         </div>

@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-gem 'csv'
+gem "csv"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.1"
@@ -63,10 +63,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "cucumber-rails"
-  gem 'database_cleaner-active_record'
+  gem "database_cleaner-active_record"
 end
-
-
 
 gem "tailwindcss-rails", "~> 4.0"
 

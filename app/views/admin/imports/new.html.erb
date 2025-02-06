@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-gray-100 font-sans">
   <!-- Sidebar -->
   <div class="w-64 bg-white shadow-md">
-    <%= render 'layouts/sidebar' %>
+    <%= render "layouts/sidebar" %>
   </div>
   <!-- Main Content -->
   <div class="flex flex-1 flex-col p-6">
@@ -22,16 +22,15 @@
         <div id="file-list" class="mt-4"></div>
         <!-- Checkbox for update or import -->
         <div class="flex items-center space-x-2" style="justify-content: center; margin-top: 1rem;">
-          <label for="overwrite-checkbox" class="text-sm text-gray-600">sobrescrever dados existentes ?</label>
-          <input type="checkbox" id="import-checkbox" class="h-5 w-5" checked>
+          <label for="overwrite-checkbox" class="text-sm text-gray-600">Sobrescrever dados existentes?</label>
+          <input type="checkbox" id="overwrite-checkbox" name="overwrite" class="h-5 w-5">
         </div>
         <!-- Buttons Section -->
-        <div class="mt-4 flex space-x-4" style="justify-content: center;">
-          <!-- Import Button (submits the form) -->
+        <div class="mt-4 flex space-x-4 justify-center">
           <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
             Enviar
           </button>
-          <%= link_to 'Voltar', admin_root_path, class: 'btn' %>
+          <%= link_to "Voltar", admin_root_path, class: "btn" %>
         </div>
       </form>
     </div>
@@ -40,6 +39,8 @@
       const fileInput = document.getElementById('file-upload');
       const fileListContainer = document.getElementById('file-list');
       const dropzone = document.getElementById('dropzone');
+      const importCheckbox = document.getElementById('import-checkbox');
+      const form = document.getElementById('file-upload-form');
 
       // Open file selector on dropzone click
       dropzone.addEventListener('click', () => {
@@ -50,7 +51,6 @@
       fileInput.addEventListener('change', (event) => {
         const files = event.target.files;
         fileListContainer.innerHTML = '';
-
         Array.from(files).forEach((file) => {
           const fileExtension = file.name.split('.').pop().toLowerCase();
           const isValid = allowedExtensions.includes(fileExtension);
@@ -58,9 +58,7 @@
 
           // Create container for file info
           const fileDiv = document.createElement('div');
-          fileDiv.className = `flex items-center justify-between p-3 mb-2 rounded-lg ${
-            isValid ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'
-          } border`;
+          fileDiv.className = `flex items-center justify-between p-3 mb-2 rounded-lg ${isValid ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'} border`;
 
           // File information HTML
           const fileInfo = document.createElement('div');
@@ -80,7 +78,6 @@
             errorMsg.className = 'text-red-600 text-sm mt-1';
             errorMsg.textContent = `${file.name} possui uma extensão inválida. Apenas arquivos JSON são permitidos.`;
             fileDiv.appendChild(errorMsg);
-
             setTimeout(() => {
               fileDiv.remove();
             }, 5000);
@@ -90,10 +87,14 @@
         });
       });
 
-      // Optional: Add functionality for the update button
-      const updateButton = document.getElementById('update-button');
-      updateButton.addEventListener('click', () => {
-        // Insert update logic here (e.g., AJAX call, form reset, etc.)
-        alert('Update button clicked');
+      // Append hidden field for checkbox value before form submission
+      form.addEventListener('submit', (event) => {
+        const actionField = document.createElement('input');
+        actionField.type = 'hidden';
+        actionField.name = 'action';
+        actionField.value = importCheckbox.checked ? 'import' : 'update';
+        form.appendChild(actionField);
       });
     </script>
+  </div>
+</div>

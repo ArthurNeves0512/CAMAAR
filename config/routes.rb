@@ -1,15 +1,15 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations',
-    confirmations: 'users/confirmations'
-  }
+                       sessions: "users/sessions",
+                       registrations: "users/registrations",
+                       confirmations: "users/confirmations",
+                     }
 
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
 
     namespace :admin do
-      root to: 'dashboard#index'
+      root to: "dashboard#index"
       resources :questionnaires do
         resources :submissions, only: [:index]
       end
@@ -27,5 +27,5 @@ Rails.application.routes.draw do
   resources :subjects, only: [:index, :show]
 
   get "up" => "rails/health#show", as: :rails_health_check
-  get 'exportar/:id', to: 'reports#export_to_csv', as: 'exportar'
+  get "exportar/:id", to: "reports#export_to_csv", as: "exportar"
 end

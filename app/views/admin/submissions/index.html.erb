@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-gray-200">
     <!-- Sidebar fixa -->
     <div class="w-64 bg-white shadow-md h-full">
-        <%= render 'layouts/sidebar' %>
+        <%= render "layouts/sidebar" %>
     </div>
 
     <!-- Conteúdo Principal -->
@@ -36,8 +36,8 @@
                 </tbody>
             </table>
 
-            <%= link_to "Gerar Relatório CSV", exportar_path(@questionnaire), 
-                class: "block mt-6 bg-green-500 text-white text-center py-3 px-6 rounded-lg hover:bg-green-600 w-full max-w-sm mx-auto" %>
+            <%= link_to "Gerar Relatório CSV", exportar_path(@questionnaire),
+                        class: "block mt-6 bg-green-500 text-white text-center py-3 px-6 rounded-lg hover:bg-green-600 w-full max-w-sm mx-auto" %>
         </div>
     </main>
 </div>
