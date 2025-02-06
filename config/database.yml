@@ -1,21 +1,23 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: caualp
-  password: 325711
-  timeout: 5000
+    adapter: postgresql
+    encoding: unicode
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    host: localhost
+
+    username: camaar
+    password: camaar
+    timeout: 5000
 
 development:
-  <<: *default
-  database: CAMAAR_development
+    <<: *default
+    database: CAMAAR_development
 
 test:
-  <<: *default
-  database: CAMAAR_test
+    <<: *default
+    database: CAMAAR_test
 
 production:
-  <<: *default
-  database: CAMAAR_production
-  username: <%= ENV['PG_USER'] %>
-  password: <%= ENV['PG_PASSWORD'] %>
+    <<: *default
+    database: CAMAAR_production
+    username: <%= ENV['PG_USER'] %>
+    password: <%= ENV['PG_PASSWORD'] %>

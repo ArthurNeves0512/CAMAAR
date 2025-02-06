@@ -1,14 +1,99 @@
-<h1>Importar Dados</h1>
-
-<%= form_with url: admin_imports_path, method: :post, local: true, multipart: true do |form| %>
-  <div>
-    <%= form.label :file, "Selecionar Arquivo CSV" %>
-    <%= form.file_field :file %>
+<div class="flex h-screen bg-gray-100 font-sans">
+  <!-- Sidebar -->
+  <div class="w-64 bg-white shadow-md">
+    <%= render 'layouts/sidebar' %>
   </div>
+  <!-- Main Content -->
+  <div class="flex flex-1 flex-col p-6">
+    <!-- Title -->
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Importar Dados</h1>
+    <div class="border-dashed border-2 border-gray-300 p-8 rounded-lg bg-white">
+      <form id="file-upload-form" action="<%= admin_imports_path %>" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="post">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <div id="dropzone" class="flex flex-col items-center justify-center text-gray-500 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16l-4-4m0 0l-4 4m4-4v12M4 12V8a4 4 0 014-4h8a4 4 0 014 4v4" />
+          </svg>
+          <p class="mt-2 text-lg font-medium text-gray-600">Arquivos</p>
+          <p class="text-sm text-gray-400">apenas JSON</p>
+          <input type="file" name="files[]" id="file-upload" class="hidden" multiple>
+        </div>
+        <div id="file-list" class="mt-4"></div>
+        <!-- Checkbox for update or import -->
+        <div class="flex items-center space-x-2" style="justify-content: center; margin-top: 1rem;">
+          <label for="overwrite-checkbox" class="text-sm text-gray-600">sobrescrever dados existentes ?</label>
+          <input type="checkbox" id="import-checkbox" class="h-5 w-5" checked>
+        </div>
+        <!-- Buttons Section -->
+        <div class="mt-4 flex space-x-4" style="justify-content: center;">
+          <!-- Import Button (submits the form) -->
+          <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            Enviar
+          </button>
+          <%= link_to 'Voltar', admin_root_path, class: 'btn' %>
+        </div>
+      </form>
+    </div>
+    <script>
+      const allowedExtensions = ['json'];
+      const fileInput = document.getElementById('file-upload');
+      const fileListContainer = document.getElementById('file-list');
+      const dropzone = document.getElementById('dropzone');
 
-  <div>
-    <%= form.submit "Importar", class: "btn" %>
-  </div>
-<% end %>
+      // Open file selector on dropzone click
+      dropzone.addEventListener('click', () => {
+        fileInput.click();
+      });
 
-<%= link_to "Voltar", admin_root_path, class: "btn" %>
+      // Display file info on file input change
+      fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        fileListContainer.innerHTML = '';
+
+        Array.from(files).forEach((file) => {
+          const fileExtension = file.name.split('.').pop().toLowerCase();
+          const isValid = allowedExtensions.includes(fileExtension);
+          const fileSize = (file.size / 1024).toFixed(1); // File size in KB
+
+          // Create container for file info
+          const fileDiv = document.createElement('div');
+          fileDiv.className = `flex items-center justify-between p-3 mb-2 rounded-lg ${
+            isValid ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'
+          } border`;
+
+          // File information HTML
+          const fileInfo = document.createElement('div');
+          fileInfo.className = 'flex items-center space-x-4';
+          fileInfo.innerHTML = `
+            <span>${isValid ? '✅' : '❌'}</span>
+            <div>
+              <p class="text-gray-800 font-medium">${file.name}</p>
+              ${isValid ? `<p class="text-sm text-gray-500">${fileSize}KB</p>` : ''}
+            </div>
+          `;
+          fileDiv.appendChild(fileInfo);
+
+          // Show error message for invalid files and remove after 5 seconds
+          if (!isValid) {
+            const errorMsg = document.createElement('p');
+            errorMsg.className = 'text-red-600 text-sm mt-1';
+            errorMsg.textContent = `${file.name} possui uma extensão inválida. Apenas arquivos JSON são permitidos.`;
+            fileDiv.appendChild(errorMsg);
+
+            setTimeout(() => {
+              fileDiv.remove();
+            }, 5000);
+          }
+
+          fileListContainer.appendChild(fileDiv);
+        });
+      });
+
+      // Optional: Add functionality for the update button
+      const updateButton = document.getElementById('update-button');
+      updateButton.addEventListener('click', () => {
+        // Insert update logic here (e.g., AJAX call, form reset, etc.)
+        alert('Update button clicked');
+      });
+    </script>

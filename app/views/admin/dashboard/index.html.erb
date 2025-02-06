@@ -16,15 +16,19 @@
             <h1 class="text-red-500 font-bold text-center"><%= flash[:alert] %></h1>
         <% end %>
   
-        <%= link_to 'Importar Dados', new_admin_import_path, class: 'bg-green-600 text-white py-3 rounded-md text-center font-semibold' %>
-        <%= link_to 'Editar Templates', admin_templates_path, class: 'bg-green-300 text-white py-3 rounded-md text-center font-semibold' %>
+        <%= link_to 'Importar Dados', new_admin_import_path, class: 'transition-colors duration-300 ease-in-out
+transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold' %>
+        <%= link_to 'Editar Templates', admin_templates_path, class: 'transition-colors duration-300 ease-in-out
+transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold' %>
   
         <!-- Botão para abrir o modal -->
-        <button id="open-modal" class="bg-green-300 text-white py-3 rounded-md text-center font-semibold">
+        <button id="open-modal" class="transition-colors duration-300 ease-in-out
+transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold">
             Enviar Formulários
         </button>
   
-        <%= link_to 'Resultados', admin_results_path, class: 'bg-green-300 text-white py-3 rounded-md text-center font-semibold' %>
+        <%= link_to 'Resultados', admin_results_path, class: 'transition-colors duration-300 ease-in-out
+transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold' %>
       </div>
   
       <!-- Modal para Seleção de Template e Turmas -->
@@ -116,5 +120,23 @@
         document.getElementById('modal').classList.add('hidden');
       });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+  // Select all elements with the class 'bg-green-300'
+  const elements = document.querySelectorAll('.bg-green-300');
+
+  // Loop through each element and attach event listeners for hover events
+  elements.forEach(element => {
+    // When mouse enters, replace bg-green-300 with bg-green-600
+    element.addEventListener('mouseover', function() {
+      this.classList.replace('bg-green-300', 'bg-green-600');
+    });
+    
+    // When mouse leaves, revert back to bg-green-300
+    element.addEventListener('mouseout', function() {
+      this.classList.replace('bg-green-600', 'bg-green-300');
+    });
+  });
+});
+
   </script>
   
