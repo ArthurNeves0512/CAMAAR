@@ -3,6 +3,10 @@ class User < ApplicationRecord
   # Adicione módulos do Devise (ex: :database_authenticatable, :registerable, etc.)
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
+  # Docente
+  belongs_to :department, optional: true
+  has_many :subjects
+
   # Suas associações existentes
   has_many :submissions
   has_many :enrollments
@@ -27,7 +31,7 @@ class User < ApplicationRecord
 
     # Busca por email OU matrícula
     where(conditions).where(
-      ["lower(email) = :value OR lower(matricula) = :value", { value: login }]
+      [ "lower(email) = :value OR lower(matricula) = :value", { value: login } ]
     ).first
   end
 end

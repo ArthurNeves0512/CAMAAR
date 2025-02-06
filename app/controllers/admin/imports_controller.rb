@@ -79,7 +79,11 @@ class Admin::ImportsController < ApplicationController
 
           existing_subject = dataList.find { |d| d.code == subjectData.code }
           if existing_subject
-            # check if already exists an turma with the same classCode
+            # If the subject already exists, check if name is not blank
+            if existing_subject.name.blank?
+              existing_subject.name = subjectData.name
+            end
+            # check if an turma with the same classCode already exists
             existing_turma = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
             if !(existing_turma)
               existing_subject.add_turmas(classData)
@@ -116,9 +120,9 @@ class Admin::ImportsController < ApplicationController
     end
 
     # Redirect or render as needed
-    redirect_to admin_templates_path, notice: "Dados importados com sucesso."
+    redirect_to new_admin_import_path, notice: "✅ Dados importados com sucesso."
   rescue JSON::ParserError => _
     # Handle JSON parsing errors
-    redirect_to admin_templates_path, alert: "Erro ao processar o arquivo JSON."
+    redirect_to new_admin_import_path, alert: "❌ Erro ao processar o arquivo JSON."
   end
 end

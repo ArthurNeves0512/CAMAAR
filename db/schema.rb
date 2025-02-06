@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,6 +30,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
     t.bigint "subject_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "time", limit: 10, null: false
+    t.index ["code"], name: "index_classrooms_on_code", unique: true
     t.index ["subject_id"], name: "index_classrooms_on_subject_id"
   end
 
@@ -43,7 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   end
 
   create_table "departments", force: :cascade do |t|
-    t.string "name", limit: 45
+    t.string "name", limit: 45, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -86,13 +88,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   end
 
   create_table "subjects", force: :cascade do |t|
-    t.string "name", limit: 45
-    t.string "code", limit: 45
-    t.string "time", limit: 10
+    t.string "name", limit: 45, null: false
+    t.string "code", limit: 45, null: false
     t.bigint "department_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["code"], name: "index_subjects_on_code", unique: true
     t.index ["department_id"], name: "index_subjects_on_department_id"
+    t.index ["user_id"], name: "index_subjects_on_user_id"
   end
 
   create_table "submissions", force: :cascade do |t|
@@ -115,6 +119,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   create_table "users", force: :cascade do |t|
     t.string "matricula", null: false
     t.string "nome", null: false
+    t.integer "role", default: 0, null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "confirmation_token"
@@ -125,8 +130,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role", default: 0, null: false
+    t.string "highest_degree"
+    t.string "active_degree"
+    t.bigint "department_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["department_id"], name: "index_users_on_department_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matricula"], name: "index_users_on_matricula", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -143,6 +151,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_01_223232) do
   add_foreign_key "questionnaires", "templates"
   add_foreign_key "questions", "templates"
   add_foreign_key "subjects", "departments"
+  add_foreign_key "subjects", "users"
   add_foreign_key "submissions", "questionnaires"
   add_foreign_key "submissions", "users"
+  add_foreign_key "users", "departments"
 end
