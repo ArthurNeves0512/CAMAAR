@@ -35,5 +35,5 @@
 
 # testing folder
 /_IGNORE
-
+.idea
 /config/database.yml
