@@ -1,6 +1,29 @@
-<h1><%= @template.name %></h1>
-
-<p><strong>Público-Alvo:</strong> <%= @template.target_audience %></p>
-<p><strong>Semestre:</strong> <%= @template.semester %></p>
-
-<%= link_to "Voltar", admin_templates_path, class: "btn" %>
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <!-- Informações do Template -->
+    <h1 class="text-2xl font-bold mb-4"><%= @template.name %></h1>
+  
+    <p><strong>Público-Alvo:</strong> <%= @template.target_audience %></p>
+    <p><strong>Semestre:</strong> <%= @template.semester %></p>
+  
+    <!-- Lista de Questões Relacionadas -->
+    <h2 class="text-xl font-semibold mt-6 mb-4">Questões do Template</h2>
+  
+    <% if @template.questions.any? %>
+      <ul class="space-y-4">
+        <% @template.questions.each do |question| %>
+          <li class="bg-gray-100 p-4 rounded-md shadow-sm">
+            <p><strong>Texto:</strong> <%= question.text %></p>
+            <p><strong>Tipo:</strong> <%= question.question_type.humanize %></p>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-gray-500">Nenhuma questão cadastrada para este template.</p>
+    <% end %>
+  
+    <!-- Botão Voltar -->
+    <div class="mt-6">
+      <%= link_to "Voltar", admin_templates_path, class: "text-gray-600 hover:text-blue-600" %>
+    </div>
+  </div>
+  

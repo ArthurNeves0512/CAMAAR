@@ -13,15 +13,17 @@ class Admin::QuestionnairesController < ApplicationController
   def create
     template_id = params[:template_id]
     classroom_codes = params[:classroom_codes]
+    questionnaire_name = params[:name]  # Obtém o nome do questionário
 
-    # Lógica para criar os formulários
-    # Exemplo:
-    @questionnaire = Questionnaire.new(template_id: template_id)
+    @questionnaire = Questionnaire.new(
+      name: questionnaire_name,      # Salva o nome no banco
+      template_id: template_id
+    )
+
     if @questionnaire.save
-      # Lógica para associar as turmas
       classroom_codes.each do |code|
         classroom = Classroom.find_by(code: code)
-        # Adiciona as turmas ao formulário, se necessário
+        # Associe as turmas, se necessário
       end
       render json: { success: true }
     else

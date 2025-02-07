@@ -1,95 +1,94 @@
 <style>
- .centerplaceholder {
-    text-align: center;
- }
- .rightmenu {
-    display: flex;
-    gap: 1.5rem;
-}
-.padder {
-    padding-left: 7rem;
-    padding-right: 7rem;
-}
- }
-</style>
-<div class="flex h-screen bg-gray-200">
-  <!-- Sidebar -->
-  <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
-    ☰ Menu
-  </button>
-
-  <div class="flex h-screen">
-    <!-- Sidebar -->
-    <%= render "layouts/sidebar" %>
-
-    <!-- Conteúdo Principal -->
-    <main class="flex-1 p-6 ml-64"><!-- margem esquerda para compensar a sidebar -->
-    <div class="mainframe">
-      <!-- Cabeçalho -->
-      <div class="flex justify-between items-center mb-6 padder">
-        <h1 class="text-2xl font-bold">Avaliações</h1>
-
-        <div class="rightmenu">
-        <div class="relative">
-          <input type="text" placeholder="Pesquisar..." class="border rounded-full px-4 py-2 pl-10 centerplaceholder">
-          <span class="absolute left-1 top-2 text-gray-400" style="padding-left: 0.5rem;">🔍</span>
-        </div>
-
-        <!-- Botão com dropdown para logout -->
-        <div class="relative inline-block text-left">
-          <!-- Botão que exibe o dropdown -->
-          <button type="button" onclick="toggleDropdown()"
-                  class="w-10 h-10 rounded-full bg-purple-800 flex items-center justify-center text-white font-bold hover:bg-purple-900 transition-colors focus:outline-none">
-            <%= current_user.nome[0].upcase %>
-          </button>
-
-          <!-- Dropdown oculto inicialmente -->
-          <div id="logoutDropdown" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-              <!-- Corrigido para utilizar o form_for e button_tag corretamente -->
-              <%= form_for(:destroy_user_session, url: destroy_user_session_path, method: :delete, html: { data: { confirm: "Tem certeza que deseja sair?" } }) do %>
-                <%= button_tag "Sair", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem" %>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-    
-
-      <!-- Conteúdo dos questionários -->
-      <div class="flex flex-wrap justify-center gap-6">
-        <% @questionnaires.each do |questionnaire| %>
-          <div class="bg-white shadow-md rounded-lg p-6 border border-gray-300 max-w-xs w-full">
-            <h3 class="text-lg font-bold text-gray-900"><%= questionnaire.name %></h3>
-            <p class="text-sm text-gray-600">
-              <%= questionnaire.template.semester if questionnaire.template %>
-            </p>
-            <p class="text-sm font-semibold text-gray-800">
-              <% classroom = Classroom.find_by(id: questionnaire.classroom_info) %>
-              <% professor = classroom&.enrollments&.joins(:user)&.where(users: { role: "professor" })&.first&.user %>
-              <%= professor ? professor.nome : "Professor não atribuído" %>
-            </p>
-          </div>
-        <% end %>
-      </div></div>
-    </main>
-  </div>
-</div>
-
-<!-- Script para alternar a visibilidade do dropdown -->
-<script>
-  function toggleDropdown() {
-    var dropdown = document.getElementById("logoutDropdown");
-    dropdown.classList.toggle("hidden");
+  .centerplaceholder {
+     text-align: center;
   }
-
-  // Opcional: fecha o dropdown ao clicar fora dele
-  window.addEventListener("click", function(e) {
-    var dropdown = document.getElementById("logoutDropdown");
-    var button = e.target.closest("button");
-    if (!e.target.closest("#logoutDropdown") && !button) {
-      dropdown.classList.add("hidden");
-    }
-  });
-</script>
+  .rightmenu {
+     display: flex;
+     gap: 1.5rem;
+  }
+  .padder {
+     padding-left: 7rem;
+     padding-right: 7rem;
+  }
+ </style>
+ 
+ <div class="flex h-screen bg-gray-200">
+   <!-- Sidebar -->
+   <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
+     ☰ Menu
+   </button>
+ 
+   <div class="flex h-screen">
+     <!-- Sidebar -->
+     <%= render "layouts/sidebar" %>
+ 
+     <!-- Conteúdo Principal -->
+     <main class="flex-1 p-6 ml-64">
+       <div class="mainframe">
+         <!-- Cabeçalho -->
+         <div class="flex justify-between items-center mb-6 padder">
+           <h1 class="text-2xl font-bold">Avaliações</h1>
+ 
+           <div class="rightmenu">
+             <div class="relative">
+               <input type="text" placeholder="Pesquisar..." class="border rounded-full px-4 py-2 pl-10 centerplaceholder">
+               <span class="absolute left-1 top-2 text-gray-400" style="padding-left: 0.5rem;">🔍</span>
+             </div>
+ 
+             <!-- Botão com dropdown para logout -->
+             <div class="relative inline-block text-left">
+               <button type="button" onclick="toggleDropdown()"
+                       class="w-10 h-10 rounded-full bg-purple-800 flex items-center justify-center text-white font-bold hover:bg-purple-900 transition-colors focus:outline-none">
+                 <%= current_user.nome[0].upcase %>
+               </button>
+ 
+               <!-- Dropdown oculto inicialmente -->
+               <div id="logoutDropdown" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                 <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                   <%= form_for(:destroy_user_session, url: destroy_user_session_path, method: :delete, html: { data: { confirm: "Tem certeza que deseja sair?" } }) do %>
+                     <%= button_tag "Sair", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem" %>
+                   <% end %>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+ 
+         <!-- Conteúdo dos questionários -->
+         <div class="flex flex-wrap justify-center gap-6">
+           <% @questionnaires.each do |questionnaire| %>
+             <%= link_to questionnaire_path(questionnaire), class: "block bg-white shadow-md rounded-lg p-6 border border-gray-300 max-w-xs w-full hover:bg-gray-100 transition" do %>
+               <h3 class="text-lg font-bold text-gray-900"><%= questionnaire.name %></h3>
+               <p class="text-sm text-gray-600">
+                 <%= questionnaire.template.semester if questionnaire.template %>
+               </p>
+               <p class="text-sm font-semibold text-gray-800">
+                 <% classroom = Classroom.find_by(id: questionnaire.classroom_info) %>
+                 <% professor = classroom&.enrollments&.joins(:user)&.where(users: { role: "professor" })&.first&.user %>
+                 <%= professor ? professor.nome : "Professor não atribuído" %>
+               </p>
+             <% end %>
+           <% end %>
+         </div>
+       </div>
+     </main>
+   </div>
+ </div>
+ 
+ <!-- Script para alternar a visibilidade do dropdown -->
+ <script>
+   function toggleDropdown() {
+     var dropdown = document.getElementById("logoutDropdown");
+     dropdown.classList.toggle("hidden");
+   }
+ 
+   // Fecha o dropdown ao clicar fora dele
+   window.addEventListener("click", function(e) {
+     var dropdown = document.getElementById("logoutDropdown");
+     var button = e.target.closest("button");
+     if (!e.target.closest("#logoutDropdown") && !button) {
+       dropdown.classList.add("hidden");
+     }
+   });
+ </script>
+ 

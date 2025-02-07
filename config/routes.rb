@@ -3,6 +3,7 @@ Rails.application.routes.draw do
                        sessions: "users/sessions",
                        registrations: "users/registrations",
                        confirmations: "users/confirmations",
+                       passwords: 'users/passwords'
                      }
 
   authenticated :user do
@@ -10,14 +11,23 @@ Rails.application.routes.draw do
 
     namespace :admin do
       root to: "dashboard#index"
+      
+      # Questionários
       resources :questionnaires do
         resources :submissions, only: [:index]
       end
-      resources :templates
+
+      # Templates
+      resources :templates do
+        # Rotas para criar e excluir questões dentro do template
+        resources :questions, only: [:new, :create, :edit, :update, :destroy], controller: 'templates/questions'
+      end
+
       resources :imports, only: [:new, :create]
       resources :results, only: [:index]
     end
 
+    # Questionários no frontend
     resources :questionnaires, only: [:index, :show] do
       resources :submissions, only: [:new, :create]
     end
