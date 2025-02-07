@@ -3,6 +3,10 @@ class User < ApplicationRecord
   # Adicione módulos do Devise (ex: :database_authenticatable, :registerable, etc.)
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
+  # Docente
+  belongs_to :department, optional: true
+  has_many :classrooms
+
   # Suas associações existentes
   has_many :submissions
   has_many :enrollments

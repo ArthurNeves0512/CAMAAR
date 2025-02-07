@@ -8,7 +8,16 @@ class Admin::TemplatesController < ApplicationController
     @template = Template.new
     @show_modal = false # Inicializa como false, só será true se houver erro na criação
   end
-
+  def edit
+    @template = Template.find(params[:id])
+    render :edit
+  end
+  def new
+    render :new
+  end
+  def destroy
+    @template = Template.find(params[:id])
+  end
   def show
     # Exibe o template, já carregado pela ação set_template
     @questions = @template.questions

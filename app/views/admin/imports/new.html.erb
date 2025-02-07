@@ -11,7 +11,7 @@
       <form id="file-upload-form" action="<%= admin_imports_path %>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="post">
         <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-        <div id="dropzone" class="flex flex-col items-center justify-center text-gray-500 cursor-pointer">
+        <div id="dropzone" class="flex flex-col items-center justify-center text-gray-500 cursor-pointer" style="margin-top: 2rem;">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16l-4-4m0 0l-4 4m4-4v12M4 12V8a4 4 0 014-4h8a4 4 0 014 4v4" />
           </svg>
@@ -31,6 +31,10 @@
             Enviar
           </button>
           <%= link_to "Voltar", admin_root_path, class: "btn" %>
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+          <%= flash[:notice] %>
+          <%= flash[:alert] %>
         </div>
       </form>
     </div>

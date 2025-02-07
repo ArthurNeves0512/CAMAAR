@@ -15,16 +15,21 @@ users = []
   if student.new_record?
     student.matricula = "20250#{i + 1}"
     student.nome = "Aluno #{i + 1}"
+    student.role = :student  # Utilizando o símbolo definido no enum
     student.password = "123456"
     student.password_confirmation = "123456"
     student.confirmed_at = Time.now
-    student.role = :student  # Utilizando o símbolo definido no enum
+    student.highest_degree = "Bacharelado"
+    student.active_degree = "CANNABIS/CASESO"
     student.save!
     users << student
     puts "Aluno criado: #{student.email} | Senha: 123456"
   else
     puts "Aluno já existe: #{student.email}"
   end
+rescue ActiveRecord::RecordInvalid => e
+  puts "Erro ao criar registro: #{e.record.errors.full_messages}"
+  raise e
 end
 
 # Criando 2 usuários professores, se ainda não existirem
@@ -38,6 +43,9 @@ professors = []
     teacher.password_confirmation = "123456"
     teacher.confirmed_at = Time.now
     teacher.role = :teacher
+    teacher.highest_degree = "Doutorado"
+    teacher.active_degree = "POSDOC"
+    teacher.department = departments.sample
     teacher.save!
     professors << teacher
     users << teacher
@@ -86,7 +94,6 @@ departments.each do |dept|
     subject = Subject.find_or_initialize_by(name: "Disciplina #{i + 1} - #{dept.name}")
     if subject.new_record?
       subject.code = "D#{dept.id}#{i + 1}"
-      subject.time = "24T12"
       subject.department = dept
       subject.save!
       subjects << subject
@@ -106,11 +113,17 @@ subjects.each do |subject|
     # Usando um código baseado no id da disciplina e em um sufixo
     classroom = Classroom.find_or_initialize_by(code: "T#{subject.id}A")
     if classroom.new_record?
-      classroom.name = "Engenharia de Software"
-      classroom.classcode = "T#{subject.id}A"
-      classroom.time = Time.now
+      def generate_subject_time
+        days = (1..6).to_a.sample(2).sort.join  # Randomly selects 2 different days
+        period = ["M", "T", "N"].sample       # Randomly selects a time period
+        slots = (1..6).to_a.sample(2).sort.join # Randomly selects 2 class slots
+        "#{days}#{period}#{slots}"
+      end
+
+      classroom.time = generate_subject_time
       classroom.semester = "2025/1"
       classroom.subject = subject
+      classroom.teacher = User.where(role: :teacher).order("RANDOM()").first
       classroom.save!
 
       classrooms << classroom
