@@ -4,6 +4,7 @@
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
+  config.i18n.default_locale = :'pt-BR'
   # Configure 'rails notes' to inspect Cucumber files
   config.annotations.register_directories("features")
   config.annotations.register_extensions("feature") { |tag| /#\s*(#{tag}):?\s*(.*)$/ }

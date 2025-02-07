@@ -12,7 +12,7 @@ RSpec.feature "Login no sistema", type: :feature do
     fill_in "Senha", with: user.password  # Corrigido para 'Senha'
     click_button "Entrar"
     expect(current_path).to eq(authenticated_root_path)
-    expect(page).to have_content("Lista de Questionários")
+    expect(page).to have_content("Avaliações")
   end
 
   scenario "Login bem-sucedido com matricula" do
@@ -26,7 +26,7 @@ RSpec.feature "Login no sistema", type: :feature do
     fill_in "Senha", with: user.password  # Corrigido para 'Senha'
     click_button "Entrar"
     expect(current_path).to eq(authenticated_root_path)
-    expect(page).to have_content("Lista de Questionários")
+    expect(page).to have_content("Avaliações")
   end
 
   scenario "Login com credenciais inválidas" do
