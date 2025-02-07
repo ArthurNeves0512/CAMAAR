@@ -1,0 +1,12 @@
+<h2>Recuperar Senha</h2>
+
+<%= form_with scope: :user, url: user_password_path, method: :post, local: true do |f| %>
+  <div class="mb-3">
+    <%= f.label :email, "Email", class: "form-label" %>
+    <%= f.email_field :email, class: "form-control", autofocus: true, required: true %>
+  </div>
+
+  <div class="d-grid">
+    <%= f.submit "Confirmar Identidade", class: "btn btn-primary" %>
+  </div>
+<% end %>

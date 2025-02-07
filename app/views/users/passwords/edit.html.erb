@@ -1,0 +1,32 @@
+<h2>Definir Nova Senha</h2>
+
+<%= form_with model: resource, url: user_password_path, method: :patch, local: true do |f| %>
+  <!-- Exibe mensagens de erro -->
+  <% if resource.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Erro(s) ao redefinir a senha:</h4>
+      <ul>
+        <% resource.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Campo oculto para o token de redefinição de senha -->
+  <%= f.hidden_field :reset_password_token, value: params[:reset_password_token] %>
+
+  <div class="mb-3">
+    <%= f.label :password, "Nova Senha", class: "form-label" %>
+    <%= f.password_field :password, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :password_confirmation, "Confirmar Senha", class: "form-label" %>
+    <%= f.password_field :password_confirmation, class: "form-control", required: true %>
+  </div>
+
+  <div class="d-grid">
+    <%= f.submit "Alterar Senha", class: "btn btn-success" %>
+  </div>
+<% end %>

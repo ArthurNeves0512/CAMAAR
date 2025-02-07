@@ -1,142 +1,151 @@
 <div class="flex h-screen bg-gray-200">
-    <!-- Botão do menu para telas menores -->
-    <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
-        ☰ Menu
-    </button>
-  
-    <!-- Sidebar com largura fixa -->
-    <div class="w-64">
-        <%= render "layouts/sidebar" %>
-    </div>
-  
-    <!-- Conteúdo Principal (adicionamos "relative" para posicionar o modal dentro dele) -->
-    <div class="flex flex-1 justify-center items-center relative">
-      <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4 w-80">
-        <% if flash[:alert] %>
-            <h1 class="text-red-500 font-bold text-center"><%= flash[:alert] %></h1>
-        <% end %>
-  
-        <%= link_to "Importar Dados", new_admin_import_path, class: "transition-colors duration-300 ease-in-out
-                                                                                                                                                            transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
-        <%= link_to "Editar Templates", admin_templates_path, class: "transition-colors duration-300 ease-in-out
-                                                                                                                                                            transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
-  
-        <!-- Botão para abrir o modal -->
-        <button id="open-modal" class="transition-colors duration-300 ease-in-out
-transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold">
-            Enviar Formulários
-        </button>
-  
-        <%= link_to "Resultados", admin_results_path, class: "transition-colors duration-300 ease-in-out
-                                                                                                                                                            transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
-      </div>
-  
-      <!-- Modal para Seleção de Template e Turmas -->
-      <!-- Com "absolute inset-0" ele ocupa toda a área do conteúdo principal, não da tela toda -->
-      <div id="modal" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-md w-[500px]">
-          <label class="block mb-2 font-semibold">Template:</label>
-          <select id="template_id" class="w-full p-2 border rounded-md">
-            <% @templates.each do |template| %>
-              <option value="<%= template.id %>"><%= template.name %></option>
-            <% end %>
-          </select>
-  
-          <!-- Lista de Turmas em formato de tabela -->
-          <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="border-b">
-                  <th class="px-2 py-1">Nome</th>
-                  <th class="px-2 py-1">Semestre</th>
-                  <th class="px-2 py-1">Código</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @classrooms.each do |classroom| %>
-                  <tr class="border-b">
-                    <td class="px-2 py-1 flex items-center gap-2">
-                      <input type="checkbox" name="classrooms[]" value="<%= classroom.code %>" class="classroom-checkbox">
-                      <span>Estudos Em</span>
-                    </td>
-                    <td class="px-2 py-1"><%= classroom.semester %></td>
-                    <td class="px-2 py-1"><%= classroom.code %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-  
-          <!-- Botões do Modal -->
-          <div class="mt-4 flex justify-between">
-            <button id="close-modal" class="bg-gray-500 text-white py-2 px-4 rounded-md">Cancelar</button>
-            <button id="submit-form" class="bg-green-600 text-white py-2 px-6 rounded-md">Enviar</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Botão do menu para telas menores -->
+  <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
+      ☰ Menu
+  </button>
+
+  <!-- Sidebar com largura fixa -->
+  <div class="w-64">
+      <%= render "layouts/sidebar" %>
   </div>
-  
-  <script>
-    document.getElementById('open-modal').addEventListener('click', function () {
+
+  <!-- Conteúdo Principal (com posição relativa para o modal) -->
+  <div class="flex flex-1 justify-center items-center relative">
+      <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4 w-80">
+          <% if flash[:alert] %>
+              <h1 class="text-red-500 font-bold text-center"><%= flash[:alert] %></h1>
+          <% end %>
+
+          <%= link_to "Importar Dados", new_admin_import_path, class: "transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
+          <%= link_to "Editar Templates", admin_templates_path, class: "transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
+
+          <!-- Botão para abrir o modal -->
+          <button id="open-modal" class="transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold">
+              Enviar Formulários
+          </button>
+
+          <%= link_to "Resultados", admin_results_path, class: "transition-colors duration-300 ease-in-out bg-green-300 text-white py-3 rounded-md text-center font-semibold" %>
+      </div>
+
+      <!-- Modal para Seleção de Template e Turmas -->
+      <div id="modal" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+          <div class="bg-white p-6 rounded-lg shadow-md w-[500px]">
+              <!-- Campo para o Nome do Questionário -->
+              <label class="block mb-2 font-semibold">Nome do Questionário:</label>
+              <input type="text" id="questionnaire_name" class="w-full p-2 border rounded-md" placeholder="Digite o nome do questionário">
+
+              <!-- Seleção de Template -->
+              <label class="block mb-2 font-semibold">Template:</label>
+              <select id="template_id" class="w-full p-2 border rounded-md">
+                  <% @templates.each do |template| %>
+                      <option value="<%= template.id %>"><%= template.name %></option>
+                  <% end %>
+              </select>
+
+              <!-- Lista de Turmas em formato de tabela -->
+              <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md">
+                  <table class="w-full text-left border-collapse">
+                      <thead>
+                          <tr class="border-b">
+                              <th class="px-2 py-1">Nome</th>
+                              <th class="px-2 py-1">Semestre</th>
+                              <th class="px-2 py-1">Código</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <% @classrooms.each do |classroom| %>
+                              <tr class="border-b">
+                                  <!-- Se possível, substitua "Estudos Em" pelo nome da turma -->
+                                  <td class="px-2 py-1 flex items-center gap-2">
+                                      <input type="checkbox" name="classrooms[]" value="<%= classroom.code %>" class="classroom-checkbox">
+                                      <span><%= "Estudos Em" %></span>
+                                  </td>
+                                  <td class="px-2 py-1"><%= classroom.semester %></td>
+                                  <td class="px-2 py-1"><%= classroom.code %></td>
+                              </tr>
+                          <% end %>
+                      </tbody>
+                  </table>
+              </div>
+
+              <!-- Botões do Modal -->
+              <div class="mt-4 flex justify-between">
+                  <button id="close-modal" class="bg-gray-500 text-white py-2 px-4 rounded-md">Cancelar</button>
+                  <button id="submit-form" class="bg-green-600 text-white py-2 px-6 rounded-md">Enviar</button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+  // Abrir o modal
+  document.getElementById('open-modal').addEventListener('click', function () {
       document.getElementById('modal').classList.remove('hidden');
-    });
-  
-    document.getElementById('close-modal').addEventListener('click', function () {
+  });
+
+  // Fechar o modal
+  document.getElementById('close-modal').addEventListener('click', function () {
       document.getElementById('modal').classList.add('hidden');
-    });
-  
-    document.getElementById('submit-form').addEventListener('click', function () {
+  });
+
+  // Envio do formulário via fetch
+  document.getElementById('submit-form').addEventListener('click', function () {
+      let questionnaireName = document.getElementById('questionnaire_name').value.trim();
       let templateId = document.getElementById('template_id').value;
-      let classroomsSelecionadas = [...document.querySelectorAll('.classroom-checkbox:checked')].map(cb => cb.value);
-  
-      if (classroomsSelecionadas.length === 0) {
-        alert("Selecione pelo menos uma turma!");
-        return;
+      let classroomsSelecionadas = [...document.querySelectorAll('.classroom-checkbox:checked')]
+                                   .map(cb => cb.value);
+
+      if (!questionnaireName) {
+          alert("Digite um nome para o questionário!");
+          return;
       }
-  
+
+      if (classroomsSelecionadas.length === 0) {
+          alert("Selecione pelo menos uma turma!");
+          return;
+      }
+
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  
+
       fetch("<%= admin_questionnaires_path %>", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({ template_id: templateId, classroom_codes: classroomsSelecionadas })
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": csrfToken
+          },
+          body: JSON.stringify({
+              name: questionnaireName,
+              template_id: templateId,
+              classroom_codes: classroomsSelecionadas
+          })
       })
       .then(response => response.json())
       .then(data => {
-        if (data.success) {
-          alert("Formulários criados com sucesso!");
-          document.getElementById('modal').classList.add('hidden');
-          location.reload();
-        } else {
-          alert(data.message);
-        }
+          if (data.success) {
+              alert("Formulários criados com sucesso!");
+              document.getElementById('modal').classList.add('hidden');
+              location.reload();
+          } else {
+              alert(data.message);
+          }
       })
       .catch(error => {
-        alert("Erro ao criar formulários!");
-        document.getElementById('modal').classList.add('hidden');
+          alert("Erro ao criar formulários!");
+          document.getElementById('modal').classList.add('hidden');
       });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-  // Select all elements with the class 'bg-green-300'
-  const elements = document.querySelectorAll('.bg-green-300');
-
-  // Loop through each element and attach event listeners for hover events
-  elements.forEach(element => {
-    // When mouse enters, replace bg-green-300 with bg-green-600
-    element.addEventListener('mouseover', function() {
-      this.classList.replace('bg-green-300', 'bg-green-600');
-    });
-    
-    // When mouse leaves, revert back to bg-green-300
-    element.addEventListener('mouseout', function() {
-      this.classList.replace('bg-green-600', 'bg-green-300');
-    });
   });
-});
 
-  </script>
-  
+  // Efeito de hover para botões com classe bg-green-300
+  document.addEventListener('DOMContentLoaded', function() {
+      const elements = document.querySelectorAll('.bg-green-300');
+      elements.forEach(element => {
+          element.addEventListener('mouseover', function() {
+              this.classList.replace('bg-green-300', 'bg-green-600');
+          });
+          element.addEventListener('mouseout', function() {
+              this.classList.replace('bg-green-600', 'bg-green-300');
+          });
+      });
+  });
+</script>
