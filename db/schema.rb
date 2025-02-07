@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_06_235152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,8 +31,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "time", limit: 10, null: false
+    t.bigint "teacher_id", null: false
     t.index ["code"], name: "index_classrooms_on_code", unique: true
     t.index ["subject_id"], name: "index_classrooms_on_subject_id"
+    t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
   end
 
   create_table "coordinators", force: :cascade do |t|
@@ -93,10 +95,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
     t.bigint "department_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
     t.index ["code"], name: "index_subjects_on_code", unique: true
     t.index ["department_id"], name: "index_subjects_on_department_id"
-    t.index ["user_id"], name: "index_subjects_on_user_id"
   end
 
   create_table "submissions", force: :cascade do |t|
@@ -143,6 +143,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
   add_foreign_key "answers", "questionnaires"
   add_foreign_key "answers", "questions"
   add_foreign_key "classrooms", "subjects"
+  add_foreign_key "classrooms", "users", column: "teacher_id"
   add_foreign_key "coordinators", "departments"
   add_foreign_key "coordinators", "users"
   add_foreign_key "enrollments", "classrooms"
@@ -151,7 +152,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_203707) do
   add_foreign_key "questionnaires", "templates"
   add_foreign_key "questions", "templates"
   add_foreign_key "subjects", "departments"
-  add_foreign_key "subjects", "users"
   add_foreign_key "submissions", "questionnaires"
   add_foreign_key "submissions", "users"
   add_foreign_key "users", "departments"

@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   # Docente
   belongs_to :department, optional: true
-  has_many :subjects
+  has_many :classrooms
 
   # Suas associações existentes
   has_many :submissions
@@ -31,7 +31,7 @@ class User < ApplicationRecord
 
     # Busca por email OU matrícula
     where(conditions).where(
-      [ "lower(email) = :value OR lower(matricula) = :value", { value: login } ]
+      ["lower(email) = :value OR lower(matricula) = :value", { value: login }]
     ).first
   end
 end

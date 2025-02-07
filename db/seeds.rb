@@ -1,7 +1,7 @@
 puts "Iniciando povoamento do banco..."
 
 # Criando departamentos, se ainda não existirem
-departments = [ "Ciência da Computação", "Engenharia Elétrica", "Matemática" ].map do |name|
+departments = ["Ciência da Computação", "Engenharia Elétrica", "Matemática"].map do |name|
   Department.find_or_create_by!(name: name)
 end
 puts "Departamentos criados!"
@@ -27,10 +27,10 @@ users = []
   else
     puts "Aluno já existe: #{student.email}"
   end
-  rescue ActiveRecord::RecordInvalid => e
-    puts "Erro ao criar registro: #{e.record.errors.full_messages}"
-    raise e
-  end
+rescue ActiveRecord::RecordInvalid => e
+  puts "Erro ao criar registro: #{e.record.errors.full_messages}"
+  raise e
+end
 
 # Criando 2 usuários professores, se ainda não existirem
 professors = []
@@ -95,7 +95,6 @@ departments.each do |dept|
     if subject.new_record?
       subject.code = "D#{dept.id}#{i + 1}"
       subject.department = dept
-      subject.user = User.find_or_initialize_by(email: "professor#{i + 1}@email.com")
       subject.save!
       subjects << subject
       puts "Disciplina criada: #{subject.name}"
@@ -115,14 +114,16 @@ subjects.each do |subject|
     classroom = Classroom.find_or_initialize_by(code: "T#{subject.id}A")
     if classroom.new_record?
       def generate_subject_time
-        days = (1..6).to_a.sample(2).sort.join # Randomly selects 2 different days
-        period = [ 'M', 'T', 'N' ].sample         # Randomly selects a time period
+        days = (1..6).to_a.sample(2).sort.join  # Randomly selects 2 different days
+        period = ["M", "T", "N"].sample       # Randomly selects a time period
         slots = (1..6).to_a.sample(2).sort.join # Randomly selects 2 class slots
         "#{days}#{period}#{slots}"
       end
+
       classroom.time = generate_subject_time
       classroom.semester = "2025/1"
       classroom.subject = subject
+      classroom.teacher = User.where(role: :teacher).order("RANDOM()").first
       classroom.save!
 
       classrooms << classroom
