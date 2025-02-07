@@ -114,9 +114,16 @@ subjects.each do |subject|
     classroom = Classroom.find_or_initialize_by(code: "T#{subject.id}A")
     if classroom.new_record?
       def generate_subject_time
-        days = (1..6).to_a.sample(2).sort.join  # Randomly selects 2 different days
-        period = ["M", "T", "N"].sample       # Randomly selects a time period
-        slots = (1..6).to_a.sample(2).sort.join # Randomly selects 2 class slots
+        days = (1..6).to_a.sample(2).sort.join # Randomly selects 2 different days
+        period = ["M", "T", "N"].sample        # Randomly selects a time period
+
+        # Restrict slots based on the selected period
+        slots = case period
+          when "M" then (1..5).to_a.sample(2).sort.join # Morning: only slots 1-5
+          when "T" then (1..6).to_a.sample(2).sort.join # Afternoon: slots 1-6
+          when "N" then (1..4).to_a.sample(2).sort.join # Night: only slots 1-4
+          end
+
         "#{days}#{period}#{slots}"
       end
 

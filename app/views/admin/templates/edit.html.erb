@@ -54,10 +54,10 @@
                   <%= link_to "Editar", edit_admin_template_question_path(@template, question), class: "text-blue-600 hover:text-blue-800" %>
   
                   <!-- Excluir Questão (com button_to) -->
-                  <%= button_to admin_template_question_path(@template, question), 
-                      method: :delete, 
-                      data: { confirm: "Tem certeza que deseja excluir esta questão?" },
-                      class: "text-red-600 hover:text-red-800 bg-transparent border-0 cursor-pointer" do %>
+                  <%= button_to admin_template_question_path(@template, question),
+                                method: :delete,
+                                data: { confirm: "Tem certeza que deseja excluir esta questão?" },
+                                class: "text-red-600 hover:text-red-800 bg-transparent border-0 cursor-pointer" do %>
                     <span>Excluir</span>
                   <% end %>
                 </div>

@@ -17,7 +17,7 @@ class Admin::QuestionnairesController < ApplicationController
 
     @questionnaire = Questionnaire.new(
       name: questionnaire_name,      # Salva o nome no banco
-      template_id: template_id
+      template_id: template_id,
     )
 
     if @questionnaire.save

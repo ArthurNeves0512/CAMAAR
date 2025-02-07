@@ -74,13 +74,13 @@
                     </div>
                   <% elsif question.question_type.casecmp("Dissertativa").zero? %>
                     <%= text_field_tag "submission[answers][#{question.id}]", nil,
-                                        placeholder: "Digite sua resposta...",
-                                        class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
+                                       placeholder: "Digite sua resposta...",
+                                       class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
                   <% else %>
                     <!-- Se houver outros tipos, você pode definir um comportamento padrão -->
                     <%= text_field_tag "submission[answers][#{question.id}]", nil,
-                                        placeholder: "Digite sua resposta...",
-                                        class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
+                                       placeholder: "Digite sua resposta...",
+                                       class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
                   <% end %>
                 </div>
               <% end %>

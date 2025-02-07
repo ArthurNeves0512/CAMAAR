@@ -8,16 +8,20 @@ class Admin::TemplatesController < ApplicationController
     @template = Template.new
     @show_modal = false # Inicializa como false, só será true se houver erro na criação
   end
+
   def edit
     @template = Template.find(params[:id])
     render :edit
   end
+
   def new
     render :new
   end
+
   def destroy
     @template = Template.find(params[:id])
   end
+
   def show
     # Exibe o template, já carregado pela ação set_template
     @questions = @template.questions
@@ -43,9 +47,9 @@ class Admin::TemplatesController < ApplicationController
 
   def create
     @template = Template.new(template_params)
-    
+
     if @template.save
-      redirect_to admin_templates_path, notice: 'Template criado com sucesso!'
+      redirect_to admin_templates_path, notice: "Template criado com sucesso!"
     else
       flash.now[:alert] = "Erro ao criar o template."
       @templates = Template.all
