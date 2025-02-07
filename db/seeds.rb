@@ -109,7 +109,7 @@ puts "Disciplinas criadas!"
 # Criando turmas (classrooms), se ainda não existirem
 classrooms = []
 subjects.each do |subject|
-  2.times do |i|
+  1.times do |i|
     # Usando um código baseado no id da disciplina e em um sufixo
     classroom = Classroom.find_or_initialize_by(code: "T#{subject.id}A")
     if classroom.new_record?
