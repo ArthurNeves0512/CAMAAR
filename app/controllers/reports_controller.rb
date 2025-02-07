@@ -10,7 +10,7 @@ class ReportsController < ApplicationController
     # Se o questionário não tiver respostas, mostre uma mensagem
     if questionnaire.answers.empty?
       flash[:alert] = "Este formulário não possui resultados para exportar."
-      redirect_to admin_questionnaires_path
+      redirect_to admin_results_path
     else
       # Caso contrário, gere o CSV
       csv_data = generate_csv(questionnaire)

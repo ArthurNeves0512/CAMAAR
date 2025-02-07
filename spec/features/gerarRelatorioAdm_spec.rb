@@ -15,10 +15,13 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     expect(page).to have_link("Gerenciamento")
     click_link "Gerenciamento"
     expect(current_path).to eq(admin_root_path)
-    expect(page).to have_content("Exportar csv")
-    click_link "Exportar csv"
-    expect(current_path).to eq(admin_questionnaires_path)
-    click_link "Exportar dados", match: :first
+    expect(page).to have_link("Resultados")
+    click_link "Resultados"
+    expect(current_path).to eq(admin_results_path)
+    expect(page).to have_link('Acessar')
+    click_link "Acessar", match: :first
+    expect(page).to have_link('Gerar Relatório CSV')
+    click_link 'Gerar Relatório CSV'
     expect(page.response_headers["Content-Type"]).to eq("text/csv")
     expect(page.response_headers["Content-Disposition"]).to include("attachment")
     expect(page.response_headers["Content-Disposition"]).to include("relatorio_formulario_")
@@ -38,12 +41,12 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     expect(page).to have_link("Gerenciamento")
     click_link "Gerenciamento"
     expect(current_path).to eq(admin_root_path)
-    expect(page).to have_content("Exportar csv")
-    click_link "Exportar csv"
-    expect(current_path).to eq(admin_questionnaires_path)
-    expect(page).to have_link("Exportar dados") #clica no link de um questionario sem respostas
+    expect(page).to have_content("Resultados")
+    click_link "Resultados"
+    expect(current_path).to eq(admin_results_path)
+    expect(page).to have_link("Acessar") #clica no link de um questionario sem respostas
     visit exportar_path(questionario_vazio) #visita a controladora e verifica que ta vazio
-    expect(current_path).to eq(admin_questionnaires_path) #redireciona novamente para questionarios de adm com a mensagem de erro
+    expect(current_path).to eq(admin_results_path) #redireciona novamente para questionarios de adm com a mensagem de erro
     expect(page).to have_content("Este formulário não possui resultados para exportar.")
   end
 end
