@@ -8,12 +8,12 @@ Sistema para avaliação de atividades acadêmicas remotas do CIC
 bundle install
 
 # 2️⃣ Configurar o banco de dados de desenvolvedor
-rails db:reset  # Apaga, recria e carrega o schema e seeds
+rails db:reset  # Apaga, recria e carrega o schema e seeds povoando as tabelas do banco de dados
 
 #  Rodar os seeds separadamente
 rails db:seed
 
-# 3️⃣ Resetar o banco de testes
+# 3️⃣ Resetar o banco de testes(para testes de features)
 rails db:test:prepare  # Prepara o banco de testes
 
 # (Alternativa) Recriar completamente o banco de testes
