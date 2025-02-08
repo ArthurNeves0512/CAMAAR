@@ -1,117 +1,109 @@
 <style>
-    .centerplaceholder {
-      text-align: center;
-    }
-    .rightmenu {
-      display: flex;
-      gap: 1.5rem;
-    }
-    .padder {
-      padding-left: 7rem;
-      padding-right: 7rem;
-    }
-  </style>
-  
-  <div class="flex h-screen bg-gray-200">
+  .centerplaceholder {
+    text-align: center;
+  }
+  .rightmenu {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .padder {
+    padding-right: 7rem;
+    margin-left: 17.65rem;
+  }
+  input[type="radio"] {
+            accent-color: rgb(40, 167, 69);
+        }
+</style>
+<div class="flex bg-gray-200">
+  <!-- Sidebar -->
+  <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
+    ☰ Menu
+  </button>
+  <div class="flex w-full">
     <!-- Sidebar -->
-    <button id="menu-btn" class="md:hidden p-3 bg-gray-700 text-white fixed top-4 left-4 rounded">
-      ☰ Menu
-    </button>
-  
-    <div class="flex h-screen w-full">
-      <!-- Sidebar -->
-      <%= render "layouts/sidebar" %>
-  
-      <!-- Conteúdo Principal -->
-      <main class="flex-1 p-6">
-        <!-- Cabeçalho -->
-        <div class="flex justify-between items-center mb-6 padder">
-          <h1 class="text-xl font-bold text-center w-full">
-            Avaliação - <%= @questionnaire&.name %> - <%= @questionnaire&.template&.semester %>
-          </h1>
-  
-          <!-- Botão do Usuário -->
-          <div class="relative inline-block text-left">
-            <button type="button" onclick="toggleDropdown()"
+    <%= render "layouts/sidebar" %>
+    <!-- Conteúdo Principal -->
+    <main class="h-screen flex-1 p-6">
+      <!-- Cabeçalho -->
+      <div class="flex justify-between items-center mb-6 padder">
+        <h1 class="text-2xl font-bold w-full">
+          Avaliação - <%= @questionnaire&.name %> - <%= @questionnaire&.template&.semester %>
+        </h1>
+        <!-- Botão do Usuário -->
+        <div class="relative inline-block text-left">
+          <button type="button" onclick="toggleDropdown()"
                     class="w-10 h-10 rounded-full bg-purple-800 flex items-center justify-center text-white font-bold hover:bg-purple-900 transition-colors focus:outline-none">
-              <%= current_user.nome[0].upcase %>
-            </button>
-  
-            <!-- Dropdown oculto inicialmente -->
-            <div id="logoutDropdown" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-              <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                <%= form_for(:destroy_user_session, url: destroy_user_session_path, method: :delete, html: { data: { confirm: "Tem certeza que deseja sair?" } }) do %>
-                  <%= button_tag "Sair", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem" %>
-                <% end %>
-              </div>
+            <%= current_user.nome[0].upcase %>
+          </button>
+          <!-- Dropdown oculto inicialmente -->
+          <div id="logoutDropdown" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+              <%= form_for(:destroy_user_session, url: destroy_user_session_path, method: :delete, html: { data: { confirm: "Tem certeza que deseja sair?" } }) do %>
+                <%= button_tag "Sair", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100", role: "menuitem" %>
+              <% end %>
             </div>
           </div>
         </div>
-  
-        <!-- Corpo -->
-        <div class="flex justify-center items-center min-h-[80vh]">
-          <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-            <%= form_with scope: :submission, url: questionnaire_submissions_path(@questionnaire), method: :post do |f| %>
-              <!-- Campo oculto para enviar o questionnaire_id -->
-              <%= f.hidden_field :questionnaire_id, value: @questionnaire.id %>
-  
-              <% @questionnaire.questions.each_with_index do |question, index| %>
-                <div class="mb-6 p-6 bg-gray-100 rounded-lg">
-                  <p class="font-bold text-lg mb-3">
-                    Pergunta <%= index + 1 %>: <%= question.text %>
-                  </p>
-  
-                  <% if question.question_type.casecmp("Múltipla escolha").zero? %>
-                    <div class="space-y-2">
-                      <% ["Muito bom", "Bom", "Satisfatório", "Ruim", "Péssimo"].each do |option| %>
-                        <label class="flex items-center space-x-3 bg-white p-2 rounded-lg shadow">
-                          <%= radio_button_tag "submission[answers][#{question.id}]", option, false,
-                                               id: "question_#{question.id}_#{option.parameterize}",
-                                               class: "form-radio h-5 w-5 text-purple-600" %>
-                          <span><%= option %></span>
-                        </label>
-                      <% end %>
-                    </div>
-                  <% elsif question.question_type.casecmp("Dissertativa").zero? %>
-                    <%= text_field_tag "submission[answers][#{question.id}]", nil,
-                                       placeholder: "Digite sua resposta...",
-                                       class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
-                  <% else %>
-                    <!-- Se houver outros tipos, você pode definir um comportamento padrão -->
-                    <%= text_field_tag "submission[answers][#{question.id}]", nil,
-                                       placeholder: "Digite sua resposta...",
-                                       class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
-                  <% end %>
-                </div>
-              <% end %>
-  
-              <!-- Botão de envio -->
-              <div class="flex justify-end mt-6">
-                <button type="submit" class="px-6 py-3 bg-purple-500 text-white rounded-lg shadow-lg hover:bg-purple-600 transition">
-                  Enviar ➤
-                </button>
+      </div>
+      <!-- Corpo -->
+      <div class="flex justify-center items-center min-h-[80vh]">
+        <div class="overflow-x-auto bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl" style="height: 80vh;">
+          <%= form_with scope: :submission, url: questionnaire_submissions_path(@questionnaire), method: :post do |f| %>
+            <!-- Campo oculto para enviar o questionnaire_id -->
+            <%= f.hidden_field :questionnaire_id, value: @questionnaire.id %>
+            <% @questionnaire.questions.each_with_index do |question, index| %>
+              <div class="mb-6 p-6 bg-gray-100 rounded-lg">
+                <p class="font-bold text-lg mb-3">
+                  Pergunta <%= index + 1 %>: <%= question.text %>
+                </p>
+                <% if question.question_type.casecmp("Múltipla escolha").zero? %>
+                  <div class="space-y-2">
+                    <% ["Muito bom", "Bom", "Satisfatório", "Ruim", "Péssimo"].each do |option| %>
+                      <label class="flex items-center space-x-3 bg-white p-2 rounded-lg shadow">
+                        <%= radio_button_tag "submission[answers][#{question.id}]", option, false,
+                                             id: "question_#{question.id}_#{option.parameterize}",
+                                             class: "form-radio h-5 w-5 text-purple-600" %>
+                        <span><%= option %></span>
+                      </label>
+                    <% end %>
+                  </div>
+                <% elsif question.question_type.casecmp("Dissertativa").zero? %>
+                  <%= text_field_tag "submission[answers][#{question.id}]", nil,
+                                     placeholder: "Digite sua resposta...",
+                                     class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
+                <% else %>
+                  <!-- Se houver outros tipos, você pode definir um comportamento padrão -->
+                  <%= text_field_tag "submission[answers][#{question.id}]", nil,
+                                     placeholder: "Digite sua resposta...",
+                                     class: "w-full border-b-2 border-black bg-transparent focus:outline-none p-2" %>
+                <% end %>
               </div>
             <% end %>
-          </div>
+            <!-- Botão de envio -->
+            <div class="flex mt-6">
+              <button type="submit" class="btn btn-outline-success" style="width: 100%;">
+                Avaliar
+              </button>
+            </div>
+          <% end %>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
-  
-  <!-- Script para alternar a visibilidade do dropdown -->
-  <script>
-    function toggleDropdown() {
-      var dropdown = document.getElementById("logoutDropdown");
-      dropdown.classList.toggle("hidden");
+</div>
+<!-- Script para alternar a visibilidade do dropdown -->
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("logoutDropdown");
+    dropdown.classList.toggle("hidden");
+  }
+
+  // Fecha o dropdown ao clicar fora dele
+  window.addEventListener("click", function(e) {
+    var dropdown = document.getElementById("logoutDropdown");
+    var button = e.target.closest("button");
+    if (!e.target.closest("#logoutDropdown") && !button) {
+      dropdown.classList.add("hidden");
     }
-  
-    // Fecha o dropdown ao clicar fora dele
-    window.addEventListener("click", function(e) {
-      var dropdown = document.getElementById("logoutDropdown");
-      var button = e.target.closest("button");
-      if (!e.target.closest("#logoutDropdown") && !button) {
-        dropdown.classList.add("hidden");
-      }
-    });
-  </script>
-  
+  });
+</script>

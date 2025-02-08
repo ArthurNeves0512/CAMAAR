@@ -3,19 +3,16 @@
   <div class="w-64 bg-white shadow-md">
     <%= render "layouts/sidebar" %>
   </div>
-
   <!-- Conteúdo Principal -->
   <div class="flex flex-1 flex-col p-6 items-center">
     <!-- Título -->
-    <h1 class="text-2xl font-bold mb-4">Gerenciamento - Templates</h1>
-
+    <h1 class="text-2xl font-bold mb-4">Gerenciamento - Editar Templates</h1>
     <!-- Grid de Templates Centralizado -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-lg w-full justify-items-center">
       <% @templates.each do |template| %>
         <div class="bg-white p-4 rounded-lg shadow-md w-64">
           <h2 class="font-semibold text-lg"><%= template.name %></h2>
           <p class="text-sm text-gray-600"><%= template.semester %></p>
-
           <!-- Ações -->
           <div class="flex justify-end gap-2 mt-3">
             <%= link_to edit_admin_template_path(template), class: "text-gray-600 hover:text-blue-600" do %>
@@ -27,56 +24,31 @@
           </div>
         </div>
       <% end %>
-
       <!-- Botão de Adicionar -->
       <div class="bg-white p-4 rounded-lg shadow-md w-64 flex justify-center items-center cursor-pointer" onclick="openModal()">
         <span class="text-3xl text-gray-600 hover:text-blue-600">+</span>
       </div>
     </div>
-
     <!-- Modal de Criação -->
     <div id="templateModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center <%= "hidden" unless @show_modal %>">
       <div class="bg-white p-6 rounded-lg w-96">
         <h2 class="text-xl font-bold mb-4">Criar Template</h2>
-
         <%= form_with(model: @template, url: admin_templates_path, method: :post, local: true) do |f| %>
           <div class="mb-4">
             <label class="block text-sm font-medium">Nome do template:</label>
             <%= f.text_field :name, class: "border p-2 w-full rounded-md" %>
           </div>
-
           <div class="mb-4">
             <label class="block text-sm font-medium">Semestre:</label>
             <%= f.text_field :semester, class: "border p-2 w-full rounded-md" %>
           </div>
-
-          <!-- Questões -->
-          <div id="questionsContainer">
-            <h3 class="font-semibold mb-2">Questões</h3>
-
-            <div class="question-item mb-4">
-              <label class="block text-sm font-medium">Tipo:</label>
-              <select name="template[questions_attributes][][question_type]" class="border p-2 w-full rounded-md">
-                <option value="Radio">Múltipla Escolha</option>
-                <option value="Texto">Texto</option>
-              </select>
-
-              <label class="block text-sm font-medium mt-2">Texto:</label>
-              <input type="text" name="template[questions_attributes][][text]" class="border p-2 w-full rounded-md">
-            </div>
-          </div>
-
-          <button type="button" class="bg-purple-600 text-white p-2 rounded-md w-full mt-2" onclick="addQuestion()">+</button>
-
-          <button type="submit" class="bg-green-500 text-white p-2 rounded-md w-full mt-4">Criar</button>
+          <button type="submit" class="transition-colors duration-300 ease-in-out bg-green-300 text-white p-2 rounded-md w-full mt-4">Criar</button>
         <% end %>
-
-        <button onclick="closeModal()" class="mt-4 text-red-500 w-full text-center">Cancelar</button>
+        <button onclick="closeModal()" class="mt-4 text-red-500 w-full text-center btn btn-outline-danger">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
-
 <script>
   function openModal() {
     document.getElementById("templateModal").classList.remove("hidden");
@@ -85,21 +57,15 @@
   function closeModal() {
     document.getElementById("templateModal").classList.add("hidden");
   }
-
-  function addQuestion() {
-    const container = document.getElementById("questionsContainer");
-    const newQuestion = document.createElement("div");
-    newQuestion.classList.add("question-item", "mb-4");
-    newQuestion.innerHTML = `
-      <label class="block text-sm font-medium">Tipo:</label>
-      <select name="template[questions_attributes][][question_type]" class="border p-2 w-full rounded-md">
-        <option value="Radio">Múltipla Escolha</option>
-        <option value="Texto">Texto</option>
-      </select>
-
-      <label class="block text-sm font-medium mt-2">Texto:</label>
-      <input type="text" name="template[questions_attributes][][text]" class="border p-2 w-full rounded-md">
-    `;
-    container.appendChild(newQuestion);
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+      const elements = document.querySelectorAll('.bg-green-300');
+      elements.forEach(element => {
+          element.addEventListener('mouseover', function() {
+              this.classList.replace('bg-green-300', 'bg-green-600');
+          });
+          element.addEventListener('mouseout', function() {
+              this.classList.replace('bg-green-600', 'bg-green-300');
+          });
+      });
+  });
 </script>

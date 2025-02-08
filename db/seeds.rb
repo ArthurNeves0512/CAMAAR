@@ -115,7 +115,7 @@ subjects.each do |subject|
     if classroom.new_record?
       def generate_subject_time
         days = (1..6).to_a.sample(2).sort.join # Randomly selects 2 different days
-        period = ["M", "T", "N"].sample        # Randomly selects a time period
+        period = ["M", "T", "N"].sample      # Randomly selects a time period
 
         # Restrict slots based on the selected period
         slots = case period

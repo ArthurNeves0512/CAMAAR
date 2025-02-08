@@ -6,7 +6,7 @@
   <!-- Main Content -->
   <div class="flex flex-1 flex-col p-6">
     <!-- Title -->
-    <h1 class="text-2xl font-semibold text-gray-800 mb-4">Importar Dados</h1>
+    <h1 class="text-2xl font-bold text-gray-800 mb-4" style="text-align: center;">Importar Dados</h1>
     <div class="border-dashed border-2 border-gray-300 p-8 rounded-lg bg-white">
       <form id="file-upload-form" action="<%= admin_imports_path %>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="post">
@@ -27,10 +27,9 @@
         </div>
         <!-- Buttons Section -->
         <div class="mt-4 flex space-x-4 justify-center">
-          <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+          <button type="submit" class="px-4 py-2 transition-colors duration-300 ease-in-out bg-green-300 text-white rounded hover:bg-green-600">
             Enviar
           </button>
-          <%= link_to "Voltar", admin_root_path, class: "btn" %>
         </div>
         <div style="text-align: center; margin-top: 2rem;">
           <%= flash[:notice] %>
@@ -99,6 +98,17 @@
         actionField.value = importCheckbox.checked ? 'import' : 'update';
         form.appendChild(actionField);
       });
+      document.addEventListener('DOMContentLoaded', function() {
+      const elements = document.querySelectorAll('.bg-green-300');
+      elements.forEach(element => {
+          element.addEventListener('mouseover', function() {
+              this.classList.replace('bg-green-300', 'bg-green-600');
+          });
+          element.addEventListener('mouseout', function() {
+              this.classList.replace('bg-green-600', 'bg-green-300');
+          });
+      });
+        });
     </script>
   </div>
 </div>
