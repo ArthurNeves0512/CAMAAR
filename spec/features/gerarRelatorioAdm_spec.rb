@@ -18,10 +18,10 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     expect(page).to have_link("Resultados")
     click_link "Resultados"
     expect(current_path).to eq(admin_results_path)
-    expect(page).to have_link('Acessar')
+    expect(page).to have_link("Acessar")
     click_link "Acessar", match: :first
-    expect(page).to have_link('Gerar Relatório CSV')
-    click_link 'Gerar Relatório CSV'
+    expect(page).to have_link("Gerar Relatório CSV")
+    click_link "Gerar Relatório CSV"
     expect(page.response_headers["Content-Type"]).to eq("text/csv")
     expect(page.response_headers["Content-Disposition"]).to include("attachment")
     expect(page.response_headers["Content-Disposition"]).to include("relatorio_formulario_")
