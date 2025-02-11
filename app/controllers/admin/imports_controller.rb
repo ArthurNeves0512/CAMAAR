@@ -72,6 +72,13 @@ class Admin::ImportsController < ApplicationController
 
     dataList = []
 
+    # Check if any files were uploaded
+    if params[:files].blank?
+      flash[:alert] = "Nenhum arquivo foi selecionado."
+      redirect_to new_admin_import_path
+      return
+    end
+
     # Process the uploaded files
     params[:files].each do |file|
       # Parse the JSON file
@@ -189,7 +196,7 @@ class Admin::ImportsController < ApplicationController
     redirect_to new_admin_import_path, notice: "✅ Dados importados com sucesso."
   rescue JSON::ParserError => _
     # Handle JSON parsing errors
-    redirect_to new_admin_import_path, alert: "❌ Erro ao processar o arquivo JSON."
+    redirect_to new_admin_import_path, alert: "❌ Erro de processamento."
   end
 end
 

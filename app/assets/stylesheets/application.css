@@ -23,3 +23,8 @@
 	background: rgba(0, 0, 0, 0.2); /* Cor do "thumb" (a parte que você arrasta) */
 	border-radius: 10px;
 }
+@media screen and (max-width: 1279px), screen and (max-height: 719px) {
+	body {
+		display: none;
+	}
+}

@@ -28,14 +28,14 @@
         <label class="block mb-2 font-semibold">Nome do Questionário:</label>
         <input type="text" id="questionnaire_name" class="w-full p-2 border rounded-md" placeholder="Digite o nome do questionário">
         <!-- Seleção de Template -->
-        <label class="block mb-2 font-semibold">Template:</label>
+        <label class="block mb-2 font-semibold mt-4">Template:</label>
         <select id="template_id" class="w-full p-2 border rounded-md">
           <% @templates.each do |template| %>
             <option value="<%= template.id %>"><%= template.name %></option>
           <% end %>
         </select>
         <!-- Lista de Turmas em formato de tabela -->
-        <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md">
+        <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md" id="classrooms-container">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b">
@@ -47,10 +47,11 @@
             <tbody>
               <% @classrooms.each do |classroom| %>
                 <tr class="border-b">
-                  <!-- Se possível, substitua "Estudos Em" pelo nome da turma -->
-                  <td class="px-2 py-1 flex items-center gap-2">
-                    <input type="checkbox" name="classrooms[]" value="<%= classroom.code %>" class="classroom-checkbox">
-                    <span><%= "Estudos Em" %></span>
+                  <td class="px-2 py-1">
+                    <div class="flex items-center gap-2">
+                      <input type="checkbox" name="classrooms[]" value="<%= classroom.code %>" class="classroom-checkbox">
+                      <span><%= "Estudos Em" %></span>
+                    </div>
                   </td>
                   <td class="px-2 py-1"><%= classroom.semester %></td>
                   <td class="px-2 py-1"><%= classroom.code %></td>
@@ -81,49 +82,86 @@
 
   // Envio do formulário via fetch
   document.getElementById('submit-form').addEventListener('click', function () {
-      let questionnaireName = document.getElementById('questionnaire_name').value.trim();
-      let templateId = document.getElementById('template_id').value;
-      let classroomsSelecionadas = [...document.querySelectorAll('.classroom-checkbox:checked')]
-                                   .map(cb => cb.value);
+    let questionnaireName = document.getElementById('questionnaire_name').value.trim();
+    let templateId = document.getElementById('template_id').value;
+    let classroomsSelecionadas = [...document.querySelectorAll('.classroom-checkbox:checked')]
+                                 .map(cb => cb.value);
 
-      if (!questionnaireName) {
-          alert("Digite um nome para o questionário!");
-          return;
-      }
+    // Reset the error styles
+    resetErrorStyles();
 
-      if (classroomsSelecionadas.length === 0) {
-          alert("Selecione pelo menos uma turma!");
-          return;
-      }
+    if (!questionnaireName) {
+        highlightError("questionnaire_name", "Digite um nome para o questionário!");
+        return;
+    }
 
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    if (classroomsSelecionadas.length === 0) {
+        highlightError("classrooms", "Selecione pelo menos uma turma!");
+        return;
+    }
 
-      fetch("<%= admin_questionnaires_path %>", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": csrfToken
-          },
-          body: JSON.stringify({
-              name: questionnaireName,
-              template_id: templateId,
-              classroom_codes: classroomsSelecionadas
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              alert("Formulários criados com sucesso!");
-              document.getElementById('modal').classList.add('hidden');
-              location.reload();
-          } else {
-              alert(data.message);
-          }
-      })
-      .catch(error => {
-          alert("Erro ao criar formulários!");
-          document.getElementById('modal').classList.add('hidden');
-      });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch("<%= admin_questionnaires_path %>", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+            name: questionnaireName,
+            template_id: templateId,
+            classroom_codes: classroomsSelecionadas
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); // This will automatically show the success flash in the layout
+            document.getElementById('modal').classList.add('hidden');
+        } else {
+            highlightError("general", data.message);
+        }
+    })
+    .catch(error => {
+        highlightError("general", "Erro ao criar formulários!");
+        document.getElementById('modal').classList.add('hidden');
+    });
+  });
+
+  // Função para destacar os campos com erro
+  function highlightError(field, message) {
+    if (field === "questionnaire_name") {
+        const fieldElement = document.getElementById(field);
+        fieldElement.classList.add('border-red-500', 'bg-red-300');
+    }
+
+    if (field === "classrooms") {
+        const classroomsContainer = document.getElementById('classrooms-container');
+        classroomsContainer.classList.add('border-red-500', 'bg-red-300');
+    }
+
+    if (field === "general") {
+        alert(message); // Use alert for general errors, since these are more context-independent
+    }
+  }
+
+  // Reset the error styles when the user fixes the input
+  function resetErrorStyles() {
+    const questionnaireInput = document.getElementById('questionnaire_name');
+    const classroomsContainer = document.getElementById('classrooms-container');
+
+    // Reset input field styles
+    questionnaireInput.classList.remove('border-red-500', 'bg-red-300');
+    classroomsContainer.classList.remove('border-red-500', 'bg-red-300');
+  }
+
+  // Reset error styles when user clicks on input fields or the classroom div
+  document.getElementById('questionnaire_name').addEventListener('click', function () {
+    resetErrorStyles();
+  });
+  document.getElementById('classrooms-container').addEventListener('click', function () {
+    resetErrorStyles();
   });
 
   // Efeito de hover para botões com classe bg-green-300

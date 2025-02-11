@@ -13,21 +13,23 @@ class Admin::QuestionnairesController < ApplicationController
   def create
     template_id = params[:template_id]
     classroom_codes = params[:classroom_codes]
-    questionnaire_name = params[:name]  # Obtém o nome do questionário
+    questionnaire_name = params[:name] # Obtém o nome do questionário
 
     @questionnaire = Questionnaire.new(
-      name: questionnaire_name,      # Salva o nome no banco
+      name: questionnaire_name, # Salva o nome no banco
       template_id: template_id,
     )
 
     if @questionnaire.save
       classroom_codes.each do |code|
-        classroom = Classroom.find_by(code: code)
+        # classroom = Classroom.find_by(code: code)
         # Associe as turmas, se necessário
       end
+      flash[:notice] = "✅ Formulários criados com sucesso!"
       render json: { success: true }
     else
-      render json: { success: false, message: "Erro ao criar formulário" }
+      flash[:alert] = "❌ Erro ao criar formulário"
+      render json: { success: false, message: flash[:alert] }
     end
   end
 

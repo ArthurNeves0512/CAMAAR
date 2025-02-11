@@ -1,10 +1,39 @@
-<%= form_for([@template, @question], url: admin_template_question_path(@template, @question), html: { class: "space-y-6" }) do |f| %>
-  <div class="mb-4">
-    <%= f.label :text, "Texto da Questão", class: "block text-sm font-semibold text-gray-700" %>
-    <%= f.text_area :text, class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50", placeholder: "Texto da questão" %>
+<style>
+  .frame {
+    width: 50%;
+  }
+  .screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .padder {
+    padding: 0.5rem;
+  }
+  .txtfield {
+    height: 10rem;
+  }
+  .selecting {
+    border: 0;
+  }
+  .selecting:focus {
+    outline-width: 1px;
+    outline-style: auto;
+  }
+</style>
+<div class="screen">
+  <div class="frame">
+    <h2 class="text-xl font-semibold mb-4" style="text-align: center;">Atualizar Questão</h2>
+    <%= form_for([@template, @question], url: admin_template_question_path(@template, @question), html: { class: "space-y-6" }) do |f| %>
+      <div class="mb-4">
+        <%= f.label :text, "Texto da Questão", class: "block text-sm font-semibold text-gray-700" %>
+        <%= f.text_area :text, class: "txtfield padder mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50", placeholder: "Texto da questão" %>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <%= link_to "Voltar", edit_admin_template_path(@template), class: "btn btn-outline-danger" %>
+        <%= f.submit "Atualizar Questão", class: "btn btn-outline-success" %>
+      </div>
+    <% end %>
   </div>
-
-  <div class="mt-6">
-    <%= f.submit "Atualizar Questão", class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" %>
-  </div>
-<% end %>
+</div>

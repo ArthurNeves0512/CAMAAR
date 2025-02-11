@@ -44,10 +44,10 @@ class ReportsController < ApplicationController
         .joins("JOIN submissions ON submissions.questionnaire_id = answers.questionnaire_id")
         .joins("JOIN users ON submissions.user_id = users.id")
         .select(
-          "answers.id AS answer_id, 
-           users.nome AS user_name, 
-           '#{questionnaire.name}' AS questionnaire_name, 
-           questions.text AS question_text, 
+          "answers.id AS answer_id,
+           users.nome AS user_name,
+           '#{questionnaire.name}' AS questionnaire_name,
+           questions.text AS question_text,
            answers.value AS answer_value"
         )
 

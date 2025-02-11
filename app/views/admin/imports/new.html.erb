@@ -1,114 +1,119 @@
-<div class="flex h-screen bg-gray-100 font-sans">
-  <!-- Sidebar -->
-  <div class="w-64 bg-white shadow-md">
-    <%= render "layouts/sidebar" %>
-  </div>
-  <!-- Main Content -->
-  <div class="flex flex-1 flex-col p-6">
-    <!-- Title -->
-    <h1 class="text-2xl font-bold text-gray-800 mb-4" style="text-align: center;">Importar Dados</h1>
-    <div class="border-dashed border-2 border-gray-300 p-8 rounded-lg bg-white">
-      <form id="file-upload-form" action="<%= admin_imports_path %>" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="_method" value="post">
-        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-        <div id="dropzone" class="flex flex-col items-center justify-center text-gray-500 cursor-pointer" style="margin-top: 2rem;">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16l-4-4m0 0l-4 4m4-4v12M4 12V8a4 4 0 014-4h8a4 4 0 014 4v4" />
-          </svg>
-          <p class="mt-2 text-lg font-medium text-gray-600">Arquivos</p>
-          <p class="text-sm text-gray-400">apenas JSON</p>
-          <input type="file" name="files[]" id="file-upload" class="hidden" multiple>
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar Dados</title>
+    <!-- Include Tailwind CSS -->
+    <link rel="stylesheet" href="/path/to/tailwind.css">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-md">
+        <%= render "layouts/sidebar" %>
+      </aside>
+      <!-- Main Content -->
+      <main class="flex-1 p-6 flex flex-col">
+        <header>
+          <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Importar Dados</h1>
+        </header>
+        <!-- Centered Card -->
+        <div class="flex-1 flex items-center justify-center">
+          <section class="bg-white p-8 border border-dashed border-gray-300 rounded-lg max-w-2xl w-full mx-4 shadow-lg">
+            <form id="file-upload-form" action="<%= admin_imports_path %>" method="post" enctype="multipart/form-data" class="space-y-6">
+              <input type="hidden" name="_method" value="post">
+              <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+              <!-- File Dropzone -->
+              <div id="dropzone" class="flex flex-col items-center justify-center text-gray-500 cursor-pointer border border-gray-300 rounded p-8"
+                 aria-label="Área para enviar arquivos JSON">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16l-4-4m0 0l-4 4m4-4v12M4 12V8a4 4 0 014-4h8a4 4 0 014 4v4" />
+                </svg>
+                <p class="mt-2 text-lg font-medium text-gray-600">Arquivos</p>
+                <p class="text-sm text-gray-400">Apenas JSON</p>
+                <input type="file" name="files[]" id="file-upload" class="hidden" multiple accept=".json">
+              </div>
+              <!-- File List Display -->
+              <div id="file-list" class="mt-4 space-y-2"></div>
+              <!-- Checkbox for Overwrite Option -->
+              <div class="flex items-center justify-center space-x-2">
+                <label for="overwrite-checkbox" class="text-sm text-gray-600">Sobrescrever dados existentes?</label>
+                <input type="checkbox" id="overwrite-checkbox" name="overwrite" class="h-5 w-5">
+              </div>
+              <!-- Submit Button -->
+              <div class="flex justify-center">
+                <button type="submit" class="px-6 py-3 bg-green-300 hover:bg-green-600 transition-colors duration-300 text-white rounded-lg font-medium shadow-md hover:shadow-lg">
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </section>
         </div>
-        <div id="file-list" class="mt-4"></div>
-        <!-- Checkbox for update or import -->
-        <div class="flex items-center space-x-2" style="justify-content: center; margin-top: 1rem;">
-          <label for="overwrite-checkbox" class="text-sm text-gray-600">Sobrescrever dados existentes?</label>
-          <input type="checkbox" id="overwrite-checkbox" name="overwrite" class="h-5 w-5">
-        </div>
-        <!-- Buttons Section -->
-        <div class="mt-4 flex space-x-4 justify-center">
-          <button type="submit" class="px-4 py-2 transition-colors duration-300 ease-in-out bg-green-300 text-white rounded hover:bg-green-600">
-            Enviar
-          </button>
-        </div>
-        <div style="text-align: center; margin-top: 2rem;">
-          <%= flash[:notice] %>
-          <%= flash[:alert] %>
-        </div>
-      </form>
+      </main>
     </div>
     <script>
-      const allowedExtensions = ['json'];
-      const fileInput = document.getElementById('file-upload');
-      const fileListContainer = document.getElementById('file-list');
-      const dropzone = document.getElementById('dropzone');
-      const importCheckbox = document.getElementById('import-checkbox');
-      const form = document.getElementById('file-upload-form');
+      document.addEventListener('DOMContentLoaded', () => {
+        const allowedExtensions = ['json'];
+        const fileInput = document.getElementById('file-upload');
+        const fileListContainer = document.getElementById('file-list');
+        const dropzone = document.getElementById('dropzone');
+        const form = document.getElementById('file-upload-form');
 
-      // Open file selector on dropzone click
-      dropzone.addEventListener('click', () => {
-        fileInput.click();
-      });
+        // Open file selector on dropzone click
+        dropzone.addEventListener('click', () => {
+          fileInput.click();
+        });
 
-      // Display file info on file input change
-      fileInput.addEventListener('change', (event) => {
-        const files = event.target.files;
-        fileListContainer.innerHTML = '';
-        Array.from(files).forEach((file) => {
-          const fileExtension = file.name.split('.').pop().toLowerCase();
-          const isValid = allowedExtensions.includes(fileExtension);
-          const fileSize = (file.size / 1024).toFixed(1); // File size in KB
+        // Display file information when files are selected
+        fileInput.addEventListener('change', (event) => {
+          const files = event.target.files;
+          fileListContainer.innerHTML = '';
+          Array.from(files).forEach((file) => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isValid = allowedExtensions.includes(fileExtension);
+            const fileSize = (file.size / 1024).toFixed(1);
 
-          // Create container for file info
-          const fileDiv = document.createElement('div');
-          fileDiv.className = `flex items-center justify-between p-3 mb-2 rounded-lg ${isValid ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'} border`;
+            const fileDiv = document.createElement('div');
+            fileDiv.className = `flex flex-col p-3 rounded-lg border ${isValid ? 'bg-blue-50 border-blue-300' : 'bg-red-50 border-red-300'}`;
 
-          // File information HTML
-          const fileInfo = document.createElement('div');
-          fileInfo.className = 'flex items-center space-x-4';
-          fileInfo.innerHTML = `
-            <span>${isValid ? '✅' : '❌'}</span>
-            <div>
-              <p class="text-gray-800 font-medium">${file.name}</p>
-              ${isValid ? `<p class="text-sm text-gray-500">${fileSize}KB</p>` : ''}
-            </div>
-          `;
-          fileDiv.appendChild(fileInfo);
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'flex items-center space-x-4';
+            fileInfo.innerHTML = `
+              <span>${isValid ? '✅' : '❌'}</span>
+              <div>
+                <p class="text-gray-800 font-medium">${file.name}</p>
+                ${isValid ? `<p class="text-sm text-gray-500">${fileSize} KB</p>` : ''}
+              </div>
+            `;
+            fileDiv.appendChild(fileInfo);
 
-          // Show error message for invalid files and remove after 5 seconds
-          if (!isValid) {
-            const errorMsg = document.createElement('p');
-            errorMsg.className = 'text-red-600 text-sm mt-1';
-            errorMsg.textContent = `${file.name} possui uma extensão inválida. Apenas arquivos JSON são permitidos.`;
-            fileDiv.appendChild(errorMsg);
-            setTimeout(() => {
-              fileDiv.remove();
-            }, 5000);
-          }
+            if (!isValid) {
+              const errorMsg = document.createElement('p');
+              errorMsg.className = 'text-red-600 text-sm mt-1';
+              errorMsg.textContent = 'Esse arquivo possui uma extensão inválida. Apenas arquivos JSON são permitidos.';
+              fileDiv.appendChild(errorMsg);
+              setTimeout(() => {
+                fileDiv.remove();
+              }, 5000);
+            }
 
-          fileListContainer.appendChild(fileDiv);
+            fileListContainer.appendChild(fileDiv);
+          });
+        });
+
+        // Append hidden field for action based on checkbox
+        form.addEventListener('submit', () => {
+          const overwriteCheckbox = document.getElementById('overwrite-checkbox');
+          const actionField = document.createElement('input');
+          actionField.type = 'hidden';
+          actionField.name = 'action';
+          actionField.value = overwriteCheckbox.checked ? 'import' : 'update';
+          form.appendChild(actionField);
         });
       });
-
-      // Append hidden field for checkbox value before form submission
-      form.addEventListener('submit', (event) => {
-        const actionField = document.createElement('input');
-        actionField.type = 'hidden';
-        actionField.name = 'action';
-        actionField.value = importCheckbox.checked ? 'import' : 'update';
-        form.appendChild(actionField);
-      });
-      document.addEventListener('DOMContentLoaded', function() {
-      const elements = document.querySelectorAll('.bg-green-300');
-      elements.forEach(element => {
-          element.addEventListener('mouseover', function() {
-              this.classList.replace('bg-green-300', 'bg-green-600');
-          });
-          element.addEventListener('mouseout', function() {
-              this.classList.replace('bg-green-600', 'bg-green-300');
-          });
-      });
-        });
     </script>
-  </div>
-</div>
+  </body>
+</html>
