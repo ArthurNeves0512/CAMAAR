@@ -20,8 +20,7 @@
             <tr>
               <td class="border border-gray-300 px-4 py-2 text-center"><%= submission.user.nome %></td>
               <td class="border border-gray-300 px-4 py-2">
-                <% submission.questionnaire.answers.where(questionnaire_id: submission.questionnaire_id).group_by(&:question_id).each do |_, answers| %>
-                  <% answer = answers.first %>
+                <% submission.answers.each do |answer| %> <!-- Alterei para acessar diretamente as respostas de cada submissão -->
                   <p><strong>Pergunta:</strong> <%= answer.question.text %></p>
                   <p><strong>Resposta:</strong> <%= answer.value %></p>
                   <hr>

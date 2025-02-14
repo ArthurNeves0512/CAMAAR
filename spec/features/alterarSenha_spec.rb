@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.feature "Redefinir senha do usuario", type: :feature do
   before do
     visit root_path
-    expect(page).to have_content("Bem-vindo ao Sistema de Questionários")
-    click_link "Login"
+    expect(page).to have_content("Bem-vindo ao CAMAAR")
+    click_link "Entrar"
     expect(current_path).to eq(new_user_session_path)
     expect(page).to have_link("Esqueceu a senha?")
     click_link "Esqueceu a senha?"
@@ -15,7 +15,7 @@ RSpec.feature "Redefinir senha do usuario", type: :feature do
     user = User.create(nome: "andre", email: "andre1@email.com", matricula: "211020993", password: "senha123", password_confirmation: "senha123", role: "student")
 
     fill_in "user_email", with: user.email
-    click_button "Confirmar Identidade"
+    click_button "Recuperar"
     expect(ActionMailer::Base.deliveries.count).to eq(1) #verifica se o actionmailer possui algum deliveri apos enviar o email para o metodo create, fazendo a contagem de emails
 
     # Pegue o e-mail gerado
@@ -32,7 +32,7 @@ RSpec.feature "Redefinir senha do usuario", type: :feature do
     user = User.create(nome: "andre", email: "andre1@email.com", matricula: "211020993", password: "senha123", password_confirmation: "senha123", role: "student")
 
     fill_in "user_email", with: user.email
-    click_button "Confirmar Identidade"
+    click_button "Recuperar"
     expect(ActionMailer::Base.deliveries.count).to eq(1)
 
     # Pegue o e-mail gerado
@@ -55,7 +55,7 @@ RSpec.feature "Redefinir senha do usuario", type: :feature do
   end
   scenario "Inserindo email invalido" do
     fill_in "user_email", with: "emailNadaAver@aluno.com"
-    click_button "Confirmar Identidade"
+    click_button "Recuperar"
     expect(page).to have_content("Usuário não encontrado. Verifique o e-mail informado.")
   end
 end

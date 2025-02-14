@@ -16,11 +16,11 @@ RSpec.feature "Cadastro de Usuários", type: :feature do
   end
 
   scenario "Cadastro bem-sucedido com dados válidos" do
-    fill_in "Matricula", with: valid_attributes[:matricula]
+    fill_in "Matrícula", with: valid_attributes[:matricula]
     fill_in "Nome", with: valid_attributes[:nome]
     fill_in "Email", with: valid_attributes[:email]
-    fill_in "Password", with: valid_attributes[:password]
-    fill_in "Password confirmation", with: valid_attributes[:password_confirmation]
+    fill_in "Senha", with: valid_attributes[:password]
+    fill_in "Confirmação de Senha", with: valid_attributes[:password_confirmation]
 
     expect {
       click_button "Cadastrar"
@@ -47,11 +47,11 @@ RSpec.feature "Cadastro de Usuários", type: :feature do
   end
 
   scenario "Cadastro falha por senhas não coincidirem" do
-    fill_in "Matricula", with: valid_attributes[:matricula]
+    fill_in "Matrícula", with: valid_attributes[:matricula]
     fill_in "Nome", with: valid_attributes[:nome]
     fill_in "Email", with: valid_attributes[:email]
-    fill_in "Password", with: "senha123"
-    fill_in "Password confirmation", with: "senhadiferente"
+    fill_in "Senha", with: "senha123"
+    fill_in "Confirmação de Senha", with: "senhadiferente"
 
     click_button "Cadastrar"
 
@@ -69,11 +69,11 @@ RSpec.feature "Cadastro de Usuários", type: :feature do
 
   scenario "Verificação dos elementos da página de cadastro" do
     expect(page).to have_content("Cadastrar")
-    expect(page).to have_field("Matricula")
+    expect(page).to have_field("Matrícula")
     expect(page).to have_field("Nome")
     expect(page).to have_field("Email")
-    expect(page).to have_field("Password")
-    expect(page).to have_field("Password confirmation")
+    expect(page).to have_field("Senha")
+    expect(page).to have_field("Confirmação de Senha")
     expect(page).to have_button("Cadastrar")
   end
 end

@@ -5,8 +5,8 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     user_adm = User.create(nome: "Janilson", email: "adm1@example.com", matricula: "2110320991", password: "senha123", password_confirmation: "senha123", role: "admin")
 
     visit root_path
-    expect(page).to have_content("Bem-vindo ao Sistema de Questionários")
-    click_link "Login"
+    expect(page).to have_content("Bem-vindo ao CAMAAR")
+    click_link "Entrar"
     expect(current_path).to eq(new_user_session_path)
     fill_in "Email ou Matrícula", with: user_adm.email
     fill_in "Senha", with: user_adm.password  # Corrigido para 'Senha'
@@ -19,7 +19,7 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     click_link "Resultados"
     expect(current_path).to eq(admin_results_path)
     expect(page).to have_link("Acessar")
-    click_link "Acessar", match: :first
+    click_link "Acessar", match: :first #primeiro link acessar da pagina
     expect(page).to have_link("Gerar Relatório CSV")
     click_link "Gerar Relatório CSV"
     expect(page.response_headers["Content-Type"]).to eq("text/csv")
@@ -31,8 +31,8 @@ RSpec.feature "Gerar relatorio csv para adm", type: :feature do
     user_adm = User.create(nome: "Janilson", email: "adm1@example.com", matricula: "2110320991", password: "senha123", password_confirmation: "senha123", role: "admin")
 
     visit root_path
-    expect(page).to have_content("Bem-vindo ao Sistema de Questionários")
-    click_link "Login"
+    expect(page).to have_content("Bem-vindo ao CAMAAR")
+    click_link "Entrar"
     expect(current_path).to eq(new_user_session_path)
     fill_in "Email ou Matrícula", with: user_adm.email
     fill_in "Senha", with: user_adm.password  # Corrigido para 'Senha'

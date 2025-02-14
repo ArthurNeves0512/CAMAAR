@@ -23,7 +23,7 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     expect(current_path).to eq(admin_templates_path)  # Corrigido para o caminho da lista de templates
 
     # Verificar se a lista de templates está visível e contém 2 templates
-    expect(page).to have_content("Templates Cadastrados")  # Verifica o título correto da página
+    expect(page).to have_content("Gerenciamento - Editar Templates")  # Verifica o título correto da página
     expect(page).to have_selector("tr", count: 3)  # Conta a linha do cabeçalho + duas linhas dos templates
     expect(page).to have_content("Template 1")  # Verifica o nome do template 1
     expect(page).to have_content("Template 2")  # Verifica o nome do template 2

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_06_235152) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_14_000107) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,8 +20,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_235152) do
     t.bigint "questionnaire_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "submission_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
     t.index ["questionnaire_id"], name: "index_answers_on_questionnaire_id"
+    t.index ["submission_id"], name: "index_answers_on_submission_id"
   end
 
   create_table "classrooms", force: :cascade do |t|
@@ -142,6 +144,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_06_235152) do
 
   add_foreign_key "answers", "questionnaires"
   add_foreign_key "answers", "questions"
+  add_foreign_key "answers", "submissions"
   add_foreign_key "classrooms", "subjects"
   add_foreign_key "classrooms", "users", column: "teacher_id"
   add_foreign_key "coordinators", "departments"

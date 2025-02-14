@@ -51,21 +51,27 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "rubycritic", require: false
+
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "rdoc"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem "cucumber-rails"
+  gem "cucumber-rails", require: false
   gem "database_cleaner-active_record"
+  
+  gem "simplecov", require: false
 end
 
 gem "tailwindcss-rails", "~> 4.0"
 
-gem "rspec-rails", "~> 7.1", :groups => [:development, :test]
+gem "rspec-rails", "~> 7.1", groups: [:development, :test]
