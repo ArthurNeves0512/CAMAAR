@@ -121,8 +121,24 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
-    save_and_open_page
+    puts @template1.id
+    find("a[href='/admin/templates/#{@template1.id}/questions/#{@questao.id}/edit']").click
   
+    fill_in 'question_text',with: 'O que achou do professor?'
+    click_button 'Atualizar Questão'
+    
+    expect(page).to have_content('Questão atualizada com sucesso!')
+  
+  end
+
+  scenario 'Excluir questoes do template' do
+    @questao=Question.create(name: 'pergunta1', text: 'O que achou da disciplina?', question_type: 'Múltipla escolha', template_id: @template1.id)
+    visit admin_templates_path
+    find("a[href='/admin/templates/#{@template1.id}/edit']").click
+    find('span', text: 'Excluir').click
+    save_and_open_page
+
+
   end
   
   
