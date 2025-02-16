@@ -35,7 +35,51 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     expect(page).to have_css('.text-gray-600.hover\:text-red-600') # botão excluir
   end
 
-  scenario "Editar um template" do
+  scenario "Criar um novo template" do
+    visit admin_templates_path
+
+    # Verificar se a página de templates foi carregada corretamente
+    expect(page).to have_content("Gerenciamento - Editar Templates")
+    
+    # Clicar no botão de adicionar novo template (ícone de '+')
+    find('div[onclick="openModal()"]').click
+    
+    # Verificar se o modal de criação foi aberto
+    expect(page).to have_content('Criar Template')
+
+    # Preencher o formulário de criação
+    fill_in 'template[name]', with: 'Avaliação 3'  # Usando o nome do campo 'template[name]'
+    fill_in 'template[semester]', with: '2025/3'
+    
+    # Enviar o formulário
+    click_button 'Criar'
+
+    # Verificar se o template foi criado com sucesso e se a página foi recarregada
+    expect(page).to have_content('Template criado com sucesso!')
+    expect(page).to have_content('Avaliação 3')
+    expect(page).to have_content('2025/3')
+  end
+
+  scenario "Cancelar a criação de um novo template" do
+    visit admin_templates_path
+  
+    # Verificar se a página de templates foi carregada corretamente
+    expect(page).to have_content("Gerenciamento - Editar Templates")
+    
+    # Clicar no botão de adicionar novo template (ícone de '+')
+    find('div[onclick="openModal()"]').click
+    
+    # Verificar se o modal de criação foi aberto
+    expect(page).to have_content('Criar Template')
+  
+    # Clicar no botão de cancelar (presumindo que o botão de cancelar tem uma classe ou texto)
+    click_button 'Cancelar' # ou o nome da classe do botão de cancelamento
+    
+    # Verificar se o modal foi fechado e a página de templates foi recarregada
+    expect(page).to have_content("Gerenciamento - Editar Templates")
+  end
+
+  scenario 'Editar um template' do 
     visit admin_templates_path
     # Acessar a página de templates
     # visit admin_templates_path
@@ -114,7 +158,37 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     @questao = Question.create(name: "pergunta1", text: "O que achou da disciplina?", question_type: "Múltipla escolha", template_id: @template1.id)
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
-    find("span", text: "Excluir").click
-    # save_and_open_page
+    find('span', text: 'Excluir').click
+    #save_and_open_page
+
+
   end
+  
+  scenario "Criar uma nova questão" do
+    visit admin_templates_path
+    find("a[href='/admin/templates/#{@template1.id}/edit']").click
+    
+    # Clicar no link para adicionar uma nova questão
+    click_link "Adicionar Questão"
+    
+    # Verificar se a página de criação de questão foi carregada
+    expect(page).to have_content("Criar Nova Questão")
+    
+    # Preencher os campos para criar uma nova questão
+    fill_in "Nome da Questão", with: "Qual é a sua opinião sobre o curso?"
+    fill_in "Texto da Questão", with: "Descreva sua opinião sobre o curso de Ciência da Computação."
+    select "Múltipla escolha", from: "Tipo da Questão"
+    
+    # Enviar o formulário
+    click_button "Salvar Questão"
+    
+    # Verificar se a questão foi criada com sucesso
+    expect(page).to have_content("Questão criada com sucesso!")
+    
+    # Verificar se a nova questão está visível no template
+    expect(page).to have_content("Descreva sua opinião sobre o curso de Ciência da Computação.")
+    expect(page).to have_content("Múltipla escolha")
+  end
+  
+
 end

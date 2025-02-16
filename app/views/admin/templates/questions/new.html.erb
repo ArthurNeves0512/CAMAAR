@@ -36,7 +36,7 @@
       </div>
       <div class="mb-4">
         <%= f.label :question_type, "Tipo da Questão", class: "block text-sm font-semibold text-gray-700" %>
-        <%= f.select :question_type, ["Múltipla escolha", "Dissertativa", "Verdadeiro ou Falso"] %>
+        <%= f.select :question_type, ["Múltipla escolha", "Dissertativa"] %>
       </div>
       <div style="display: flex; justify-content: space-between;">
         <%= link_to "Voltar", edit_admin_template_path(@template), class: "btn btn-outline-danger" %>

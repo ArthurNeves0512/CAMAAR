@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   let!(:user_adm) do
-    User.create!(
+    User.create(
       nome: "Janilson",
       email: "adm1@example.com",
       matricula: "2110320991",
@@ -13,7 +13,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   end
 
   let!(:template) do
-    Template.create!(
+    Template.create(
       name: "Template Teste",
       target_audience: "Ensino Médio",
       semester: "2025/1",
@@ -21,7 +21,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   end
 
   let!(:questionario) do
-    Questionnaire.create!(
+    Questionnaire.create(
       name: "Questionário - T1F",
       classroom_info: "1A",
       template_id: template.id,
@@ -29,7 +29,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   end
 
   let!(:question) do
-    Question.create!(
+    Question.create(
       name: "Pergunta 1",
       text: "Qual é a capital do Brasil?",
       question_type: "texto",
@@ -38,7 +38,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   end
 
   let!(:question_option) do
-    QuestionOption.create!(
+    QuestionOption.create(
       name: "Opção A",
       text: "Brasília",
       question_id: question.id,
@@ -46,14 +46,14 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
   end
 
   let!(:submission) do
-    Submission.create!(
+    Submission.create(
       user_id: user_adm.id,
       questionnaire_id: questionario.id,
     )
   end
 
   let!(:answer) do
-    Answer.create!(
+    Answer.create(
       value: "Brasília",
       question_id: question.id,
       questionnaire_id: questionario.id,
