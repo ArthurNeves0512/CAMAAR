@@ -5,8 +5,8 @@
     "class": {
       "classCode": "TA",
       "semester": "2021.2",
-      "time": "35T45",
-    },
+      "time": "35T45"
+    }
   },
   {
     "code": "CIC0105",
@@ -14,8 +14,8 @@
     "class": {
       "classCode": "TA",
       "semester": "2021.2",
-      "time": "35M12",
-    },
+      "time": "35M12"
+    }
   },
   {
     "code": "CIC0202",
@@ -23,7 +23,7 @@
     "class": {
       "classCode": "TA",
       "semester": "2021.2",
-      "time": "35M34",
-    },
-  },
+      "time": "35M34"
+    }
+  }
 ]
