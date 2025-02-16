@@ -13,11 +13,11 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
   end
 
   let(:classes_data) do
-    JSON.parse(File.read(Rails.root.join("classes.json")))
+    JSON.parse(File.read(Rails.root.join("spec/fixtures/classes.json")))
   end
 
   let(:class_members_data) do
-    JSON.parse(File.read(Rails.root.join("class_members.json")))
+    JSON.parse(File.read(Rails.root.join("spec/fixtures/class_members.json")))
   end
 
   before do
@@ -44,7 +44,7 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
         expect(page).to have_css('input[type="file"]')
 
         # Anexa os arquivos de importação
-        attach_file("files[]", [ Rails.root.join("classes.json"), Rails.root.join("class_members.json") ])
+        attach_file("files[]", [ Rails.root.join("spec/fixtures/classes.json"), Rails.root.join("spec/fixtures/class_members.json") ])
 
         # Ativa a opção de sobrescrever dados existentes
         check("Sobrescrever dados existentes?")
@@ -105,7 +105,7 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
         expect(page).to have_content("Sobrescrever dados existentes?")
         expect(page).to have_button("Enviar")
 
-        attach_file("files[]", Rails.root.join("wrongFile"))
+        attach_file("files[]", Rails.root.join("spec/fixtures/wrongFile"))
         click_button "Enviar"
 
         expect(page).to have_content("❌ Erro de processamento.")

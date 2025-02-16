@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.feature "Enviar formulários", type: :feature do
+RSpec.feature "Enviar formulários", type: :feature do
   background do
     # Criar um usuário admin
     user_adm = User.create!(
@@ -74,8 +75,10 @@ RSpec.feature "Enviar formulários", type: :feature do
 
     expect(page).to have_selector("#modal", visible: true)
 
+
     # Preencher o nome do questionário
     fill_in "Digite o nome do questionário", with: "Questionário de Teste"
+
 
     # Selecionar um template
     select "Template 1", from: "template_id"
