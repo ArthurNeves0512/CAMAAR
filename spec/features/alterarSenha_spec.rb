@@ -58,4 +58,25 @@ RSpec.feature "Redefinir senha do usuario", type: :feature do
     click_button "Recuperar"
     expect(page).to have_content("Usuário não encontrado. Verifique o e-mail informado.")
   end
+
+  scenario "As senhas não coincidem durante a redefinição" do
+    user = User.create(nome: "andre", email: "andre1@email.com", matricula: "211020993", password: "senha123", password_confirmation: "senha123", role: "student")
+  
+    fill_in "user_email", with: user.email
+    click_button "Recuperar"
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
+  
+    email = ActionMailer::Base.deliveries.last
+    reset_password_link = email.body.to_s.match(/href="([^"]+)"/)[1]
+    visit reset_password_link
+  
+    expect(page).to have_content("Definir Nova Senha")
+    
+    fill_in "user_password", with: "novasenha123"
+    fill_in "user_password_confirmation", with: "senhaDiferente456" # Senha de confirmação diferente
+    click_button "Alterar Senha"
+  
+    expect(page).to have_content("Erro ao atualizar a senha. Verifique os dados e tente novamente.")
+  end
+
 end

@@ -136,7 +136,7 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
     find('span', text: 'Excluir').click
-    save_and_open_page
+    #save_and_open_page
 
 
   end

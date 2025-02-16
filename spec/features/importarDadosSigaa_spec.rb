@@ -41,7 +41,28 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
     expect(page).to have_content("Dados importados com sucesso")
     
     # Verifica se os dados foram adicionados ao banco de dados
-    expect(Subject.count).to be > 0
+    expect(Subject.count).to eq(3)  # Espera que 3 registros tenham sido adicionados
+
+  # Verifica os dados do primeiro registro (BANCOS DE DADOS)
+    subject1 = Subject.find_by(code: "CIC0097")
+    expect(subject1).not_to be_nil
+    expect(subject1.name).to eq("BANCOS DE DADOS")
+    expect(subject1.code).to eq("CIC0097")
+    expect(subject1.department_id).not_to be_nil  # Verifica se o department_id foi atribuído corretamente
+
+    # Verifica os dados do segundo registro (ENGENHARIA DE SOFTWARE)
+    subject2 = Subject.find_by(code: "CIC0105")
+    expect(subject2).not_to be_nil
+    expect(subject2.name).to eq("ENGENHARIA DE SOFTWARE")
+    expect(subject2.code).to eq("CIC0105")
+    expect(subject2.department_id).not_to be_nil
+
+    # Verifica os dados do terceiro registro (PROGRAMAÇÃO CONCORRENTE)
+    subject3 = Subject.find_by(code: "CIC0202")
+    expect(subject3).not_to be_nil
+    expect(subject3.name).to eq("PROGRAMAÇÃO CONCORRENTE")
+    expect(subject3.code).to eq("CIC0202")
+    expect(subject3.department_id).not_to be_nil
 
   end
 
