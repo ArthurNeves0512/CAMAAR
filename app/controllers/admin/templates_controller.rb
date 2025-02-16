@@ -4,17 +4,32 @@ class Admin::TemplatesController < ApplicationController
   before_action :set_template, only: [:show, :edit, :update, :destroy]
 
   def index
-    @templates = Template.all
-    @template = Template.new
-    @show_modal = false # Inicializa como false, só será true se houver erro na criação
+    begin
+      @templates = Template.all
+      @template = Template.new
+      @show_modal = false
+    rescue StandardError => e
+      @templates=[]
+      @template=Template.new
+      flash.now[:alert] = "Não foi possível carregar os templates no momento. Tente novamente mais tarde: '#{e}'"
+      render :index
+    end
+    
+    
   end
 
+  
+  def edit
+  end
+  
   def update
     # Atualiza o template com os parâmetros do formulário
-    if @template.update(template_params)
+    begin
+      @template.update(template_params)
       redirect_to admin_template_path(@template), notice: "Template atualizado com sucesso!"
-    else
-      render :edit, alert: "Erro ao atualizar o template."
+    rescue StandardError => e
+      flash.now[:alert]="Erro ao atualizar o template: '#{e}'" 
+      render :edit
     end
   end
 
@@ -32,9 +47,14 @@ class Admin::TemplatesController < ApplicationController
   end
 
   def destroy
-    @template.destroy
-    redirect_to admin_templates_path, notice: "Template excluído com sucesso!"
+    begin
+      @template.destroy
+      redirect_to admin_templates_path, notice: "Template excluído com sucesso!"
+    rescue StandardError => e
+      redirect_to admin_templates_path, alert: "Erro ao excluir o template: #{e.message}"
+    end
   end
+  
 
   private
 
