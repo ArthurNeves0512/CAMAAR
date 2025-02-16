@@ -36,3 +36,4 @@
 # testing files
 /_IGNORE
 /config/database.yml
+/coverage
