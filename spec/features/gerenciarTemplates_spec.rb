@@ -121,7 +121,7 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
-    puts @template1.id
+    
     find("a[href='/admin/templates/#{@template1.id}/questions/#{@questao.id}/edit']").click
   
     fill_in 'question_text',with: 'O que achou do professor?'
@@ -136,7 +136,7 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
     find('span', text: 'Excluir').click
-    save_and_open_page
+    
 
 
   end
