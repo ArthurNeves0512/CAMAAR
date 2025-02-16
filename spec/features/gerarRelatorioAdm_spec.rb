@@ -8,7 +8,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
       matricula: "2110320991",
       password: "senha123",
       password_confirmation: "senha123",
-      role: "admin"
+      role: "admin",
     )
   end
 
@@ -16,7 +16,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
     Template.create!(
       name: "Template Teste",
       target_audience: "Ensino Médio",
-      semester: "2025/1"
+      semester: "2025/1",
     )
   end
 
@@ -24,7 +24,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
     Questionnaire.create!(
       name: "Questionário - T1F",
       classroom_info: "1A",
-      template_id: template.id
+      template_id: template.id,
     )
   end
 
@@ -33,7 +33,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
       name: "Pergunta 1",
       text: "Qual é a capital do Brasil?",
       question_type: "texto",
-      template_id: template.id
+      template_id: template.id,
     )
   end
 
@@ -41,14 +41,14 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
     QuestionOption.create!(
       name: "Opção A",
       text: "Brasília",
-      question_id: question.id
+      question_id: question.id,
     )
   end
 
   let!(:submission) do
     Submission.create!(
       user_id: user_adm.id,
-      questionnaire_id: questionario.id
+      questionnaire_id: questionario.id,
     )
   end
 
@@ -57,7 +57,7 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
       value: "Brasília",
       question_id: question.id,
       questionnaire_id: questionario.id,
-      submission_id: submission.id
+      submission_id: submission.id,
     )
   end
 
@@ -87,14 +87,13 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
 
     # Verifica se o CSV contém a resposta esperada
     expect(page.body).to include("Qual é a capital do Brasil?,Brasília")
-
   end
 
   scenario "Questionário sem resultados para exportar" do
     questionario_vazio = Questionnaire.create!(
       name: "Questionário Vazio",
       classroom_info: "2B",
-      template_id: template.id
+      template_id: template.id,
     )
 
     visit root_path

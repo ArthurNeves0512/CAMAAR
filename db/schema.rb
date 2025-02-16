@@ -34,7 +34,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_175547) do
     t.datetime "updated_at", null: false
     t.string "time", limit: 10, null: false
     t.bigint "teacher_id", null: false
-    t.index ["code"], name: "index_classrooms_on_code", unique: true
+    t.index ["code", "subject_id"], name: "index_classrooms_on_code_and_subject_id", unique: true
     t.index ["subject_id"], name: "index_classrooms_on_subject_id"
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
   end

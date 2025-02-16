@@ -7,6 +7,6 @@ class CreateClassrooms < ActiveRecord::Migration[8.0]
       t.timestamps
       t.string :time, limit: 10, null: false
     end
-    add_index :classrooms, :code, unique: true
+    add_index :classrooms, [:code, :subject_id], unique: true
   end
 end

@@ -53,7 +53,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rubycritic", require: false
-
 end
 
 group :development do
@@ -68,7 +67,7 @@ group :test do
   gem "selenium-webdriver"
   gem "cucumber-rails", require: false
   gem "database_cleaner-active_record"
-  
+
   gem "simplecov", require: false
 end
 
