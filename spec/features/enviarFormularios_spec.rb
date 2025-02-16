@@ -25,26 +25,32 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
   end
 
   scenario "Enviar formulário de questionário com template e turmas selecionadas" do
-    # Abrir o modal
-    click_button "Enviar Formulários"
+    # Abrir o modal e esperar ele carregar
+    expect(page).to have_button('Enviar Formulários')
+    click_button('Enviar Formulários')
 
-    # Esperar até que o modal esteja visível
+    
     expect(page).to have_selector("#modal", visible: true)
-
+  
     # Preencher o nome do questionário
     fill_in "Digite o nome do questionário", with: "Questionário de Teste"
-
+  
     # Selecionar um template
-    select "Template 1", from: "template_id"
-    
-
+    select 'Template 1', from: 'template_id', match: :first
+  
     # Selecionar as turmas
-    check("Estudos Em ")
-
+    within find_all('div.flex.items-center.gap-2', text: 'Estudos Em').first do
+      all('input[type="checkbox"]').each(&:click)
+    end
+  
     # Enviar o formulário
-    #click_button "Enviar"
+    puts find_button("Enviar")[:disabled] # Se for 'true', significa que está desabilitado
 
-    # Verificar se o sucesso foi exibido ou se a página foi redirecionada
-    #expect(page).to have_content("Questionário enviado com sucesso") # Ajuste conforme o texto de sucesso
+    click_button "Enviar"
+   
+    # Verificar se o sucesso foi exibido
+    #expect(find("#modal")).to have_content("✅ Formulários criados com sucesso!", wait: 30)
+
   end
+  
 end
