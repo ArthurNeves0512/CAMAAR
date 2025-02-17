@@ -5,11 +5,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>module ImportPopulator - RDoc Documentation</title>
+<title>module ClassroomBuilder - RDoc Documentation</title>
 
-  <meta name="keywords" content="ruby,module,ImportPopulator">
+  <meta name="keywords" content="ruby,module,ClassroomBuilder">
 
-    <meta name="description" content="module ImportPopulator: services/import_populator.rb">
+    <meta name="description" content="module ClassroomBuilder: services/classroom_builder.rb">
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "./";
@@ -74,7 +74,7 @@
   <div class="nav-section">
     <h3>Instance Methods</h3>
     <ul class="link-list" role="directory">
-      <li ><a href="#method-i-populate">populate</a></li>
+      <li ><a href="#method-i-find_or_create">find_or_create</a></li>
     </ul>
   </div>
 
@@ -88,14 +88,14 @@
 
 </nav>
 
-<main role="main" aria-labelledby="module-ImportPopulator">
-  <h1 id="module-ImportPopulator" class="anchor-link module">
-    module ImportPopulator
+<main role="main" aria-labelledby="module-ClassroomBuilder">
+  <h1 id="module-ClassroomBuilder" class="anchor-link module">
+    module ClassroomBuilder
   </h1>
 
   <section class="description">
     
-<p>services/import_populator.rb</p>
+<p>services/classroom_builder.rb</p>
 
   </section>
 
@@ -110,12 +110,12 @@
          <h3>Public Instance Methods</h3>
        </header>
 
-      <div id="method-i-populate" class="method-detail anchor-link ">
+      <div id="method-i-find_or_create" class="method-detail anchor-link ">
         <div class="method-header">
             <div class="method-heading">
-              <a href="#method-i-populate" title="Link to this method">
-                <span class="method-name">populate</span>
-                <span class="method-args">(subjects, overwrite)</span>
+              <a href="#method-i-find_or_create" title="Link to this method">
+                <span class="method-name">find_or_create</span>
+                <span class="method-args">(turma, teacher, subject_record)</span>
               </a>
             </div>
         </div>
@@ -127,22 +127,18 @@
           </div>
 
         <div class="method-description">
-          <div class="method-source-code" id="populate-source">
-            <pre><span class="ruby-comment"># File app/services/import_populator.rb, line 16</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">populate</span>(<span class="ruby-identifier">subjects</span>, <span class="ruby-identifier">overwrite</span>)
-  <span class="ruby-identifier">subjects</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">subject</span><span class="ruby-operator">|</span> <span class="ruby-constant">SubjectProcessor</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">subject</span>, <span class="ruby-identifier">overwrite</span>).<span class="ruby-identifier">process</span> }
+          <div class="method-source-code" id="find_or_create-source">
+            <pre><span class="ruby-comment"># File app/services/classroom_builder.rb, line 5</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_or_create</span>(<span class="ruby-identifier">turma</span>, <span class="ruby-identifier">teacher</span>, <span class="ruby-identifier">subject_record</span>)
+  <span class="ruby-identifier">classroom</span> = <span class="ruby-constant">Classroom</span>.<span class="ruby-identifier">find_or_initialize_by</span>(
+    <span class="ruby-value">code:</span> <span class="ruby-identifier">turma</span>.<span class="ruby-identifier">class_code</span>,
+    <span class="ruby-value">subject:</span> <span class="ruby-identifier">subject_record</span>
+  )
+  <span class="ruby-constant">ClassroomManager</span>.<span class="ruby-identifier">update_or_create</span>(<span class="ruby-identifier">classroom</span>, <span class="ruby-identifier">turma</span>, <span class="ruby-identifier">teacher</span>)
+  <span class="ruby-identifier">classroom</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
-          <p>Popula os dados acadêmicos no banco de dados.</p>
-
-<p>Este método percorre uma lista de disciplinas e processa cada uma delas, criando ou atualizando os registros de acordo com os dados fornecidos.</p>
-
-<p>@param subjects [Array&lt;ImportSubject&gt;] A lista de disciplinas a serem processadas. @param overwrite [Boolean] Se verdadeiro, sobrescreve as matrículas existentes. @return [void] Este método não retorna nenhum valor.</p>
-
-<p>Exemplo:</p>
-
-<pre class="ruby"><span class="ruby-identifier">populate</span>(<span class="ruby-identifier">subjects</span>, <span class="ruby-identifier">overwrite</span>)
-</pre>
+          
         </div>
 
 

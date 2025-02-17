@@ -1211,6 +1211,9 @@
       <li><a href="Classroom.html#class-Classroom-label-Exemplo+de+c-C3-B3digo-3A">Exemplo de código:</a>
     </ul>
   </li>
+  <li class="module">
+    <a href="ClassroomBuilder.html">ClassroomBuilder</a>
+  </li>
   <li class="class">
     <a href="ClassroomManager.html">ClassroomManager</a>
 
@@ -1288,6 +1291,9 @@
     </ul>
   </li>
   <li class="class">
+    <a href="EnrollmentHandler.html">EnrollmentHandler</a>
+  </li>
+  <li class="class">
     <a href="HomeController.html">HomeController</a>
   </li>
   <li class="module">
@@ -1310,12 +1316,6 @@
   </li>
   <li class="module">
     <a href="ImportPopulator.html">ImportPopulator</a>
-  </li>
-  <li class="class">
-    <a href="ImportPopulator/TurmaProcessor.html">ImportPopulator::TurmaProcessor</a>
-  </li>
-  <li class="module">
-    <a href="ImportPopulator/UserBuilder.html">ImportPopulator::UserBuilder</a>
   </li>
   <li class="class">
     <a href="ImportService.html">ImportService</a>
@@ -1376,6 +1376,9 @@
     </ul>
   </li>
   <li class="class">
+    <a href="SubjectProcessor.html">SubjectProcessor</a>
+  </li>
+  <li class="class">
     <a href="SubjectRepository.html">SubjectRepository</a>
   </li>
   <li class="class">
@@ -1389,6 +1392,9 @@
   <li class="class">
     <a href="SubmissionsController.html">SubmissionsController</a>
   </li>
+  <li class="module">
+    <a href="TeacherBuilder.html">TeacherBuilder</a>
+  </li>
   <li class="class">
     <a href="Template.html">Template</a>
 
@@ -1397,6 +1403,9 @@
       <li><a href="Template.html#class-Template-label-Valida-C3-A7-C3-B5es">Validações</a>
       <li><a href="Template.html#class-Template-label-Exemplo+de+c-C3-B3digo-3A">Exemplo de código:</a>
     </ul>
+  </li>
+  <li class="class">
+    <a href="TurmaProcessor.html">TurmaProcessor</a>
   </li>
   <li class="class">
     <a href="User.html">User</a>
@@ -1409,6 +1418,9 @@
       <li><a href="User.html#class-User-label-M-C3-A9todos">Métodos</a>
       <li><a href="User.html#class-User-label-60find_for_database_authentication-60">‘find_for_database_authentication`</a>
     </ul>
+  </li>
+  <li class="module">
+    <a href="UserBuilder.html">UserBuilder</a>
   </li>
   <li class="module">
     <a href="Users.html">Users</a>
@@ -1453,6 +1465,11 @@
     <span class="container">QuestionnaireCsvExporter</span>
 
   <li class="method">
+    <a href="EnrollmentHandler.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">EnrollmentHandler</span>
+
+  <li class="method">
     <a href="ImportDepartment.html#method-c-new">::new</a>
     &mdash;
     <span class="container">ImportDepartment</span>
@@ -1478,19 +1495,24 @@
     <span class="container">ImportSubject</span>
 
   <li class="method">
-    <a href="ImportPopulator/TurmaProcessor.html#method-c-new">::new</a>
-    &mdash;
-    <span class="container">ImportPopulator::TurmaProcessor</span>
-
-  <li class="method">
     <a href="ImportService.html#method-c-new">::new</a>
     &mdash;
     <span class="container">ImportService</span>
 
   <li class="method">
+    <a href="SubjectProcessor.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">SubjectProcessor</span>
+
+  <li class="method">
     <a href="SubjectRepository.html#method-c-new">::new</a>
     &mdash;
     <span class="container">SubjectRepository</span>
+
+  <li class="method">
+    <a href="TurmaProcessor.html#method-c-new">::new</a>
+    &mdash;
+    <span class="container">TurmaProcessor</span>
 
   <li class="method">
     <a href="ImportParser.html#method-c-parse_files">::parse_files</a>
@@ -1733,9 +1755,19 @@
     <span class="container">ReportsController</span>
 
   <li class="method">
-    <a href="ImportPopulator/UserBuilder.html#method-i-find_or_create">#find_or_create</a>
+    <a href="ClassroomBuilder.html#method-i-find_or_create">#find_or_create</a>
     &mdash;
-    <span class="container">ImportPopulator::UserBuilder</span>
+    <span class="container">ClassroomBuilder</span>
+
+  <li class="method">
+    <a href="TeacherBuilder.html#method-i-find_or_create">#find_or_create</a>
+    &mdash;
+    <span class="container">TeacherBuilder</span>
+
+  <li class="method">
+    <a href="UserBuilder.html#method-i-find_or_create">#find_or_create</a>
+    &mdash;
+    <span class="container">UserBuilder</span>
 
   <li class="method">
     <a href="SubjectRepository.html#method-i-find_or_initialize">#find_or_initialize</a>
@@ -1818,9 +1850,9 @@
     <span class="container">ImportPopulator</span>
 
   <li class="method">
-    <a href="ImportPopulator/TurmaProcessor.html#method-i-process">#process</a>
+    <a href="EnrollmentHandler.html#method-i-process">#process</a>
     &mdash;
-    <span class="container">ImportPopulator::TurmaProcessor</span>
+    <span class="container">EnrollmentHandler</span>
 
   <li class="method">
     <a href="ImportService.html#method-i-process">#process</a>
@@ -1828,9 +1860,14 @@
     <span class="container">ImportService</span>
 
   <li class="method">
-    <a href="ImportPopulator.html#method-i-process_subject">#process_subject</a>
+    <a href="SubjectProcessor.html#method-i-process">#process</a>
     &mdash;
-    <span class="container">ImportPopulator</span>
+    <span class="container">SubjectProcessor</span>
+
+  <li class="method">
+    <a href="TurmaProcessor.html#method-i-process">#process</a>
+    &mdash;
+    <span class="container">TurmaProcessor</span>
 
   <li class="method">
     <a href="Admin/QuestionnairesController.html#method-i-show">#show</a>
