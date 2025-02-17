@@ -2,70 +2,13 @@ class Admin::ImportsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!
 
-  class ImportDepartment
-    attr_accessor :name
-
-    def initialize(name: "Não definido")
-      @name = name
-    end
-  end
-
-  class ImportUser
-    # based on users from class_members.json
-    attr_accessor :name, :email, :password, :role, :matricula, :highest_degree, :active_degree, :department
-
-    def initialize
-      @name = ""
-      @email = ""
-      @password = "alunopassword"
-      @role = 0
-      @matricula = ""
-      @highest_degree = ""
-      @active_degree = ""
-      @department = ImportDepartment.new
-    end
-  end
-
-  class ImportEnrollment
-    attr_accessor :user, :classroom
-
-    def initialize
-      @user = ImportUser.new
-      @classroom = ImportClass
-    end
-  end
-
-  class ImportClass
-    attr_accessor :classCode, :semester, :time, :docente, :alunos
-
-    def initialize
-      @classCode = ""
-      @semester = ""
-      @time = ""
-      @docente = ImportUser.new
-      @alunos = []
-    end
-
-    def add_alunos(aluno)
-      @alunos << aluno
-    end
-  end
-
-  class ImportSubject
-    attr_accessor :name, :code, :department, :turmas
-
-    def initialize
-      @name = ""
-      @code = ""
-      @department = ImportDepartment.new
-      @turmas = []
-    end
-
-    def add_turma(turma)
-      @turmas << turma
-    end
-  end
-
+  # Método responsável por processar o upload dos arquivos e importar os dados para o banco de dados.
+  # - Recebe os arquivos de JSON (class_members.json e classes.json).
+  # - Realiza a leitura, processamento e armazenamento de dados no banco de dados.
+  #
+  # @param [ActionDispatch::Http::UploadedFile] files Os arquivos json enviados para a importação.
+  # @return [void] Retorna nada, mas realiza redirecionamentos baseados no sucesso ou falha do processo.
+  # @effect Coloca os dados processados no banco de dados ou redireciona com mensagens de erro ou sucesso.
   def create
     overwrite = params[:overwrite].present?
 
@@ -77,11 +20,9 @@ class Admin::ImportsController < ApplicationController
       return
     end
 
-    # Inicializa variáveis para armazenar os conteúdos dos arquivos
     class_members_data = nil
     classes_data = nil
 
-    # Itera sobre os arquivos enviados
     params[:files].each do |file|
       case file.original_filename
       when "class_members.json"
@@ -95,14 +36,12 @@ class Admin::ImportsController < ApplicationController
       end
     end
 
-    # Verifica se ambos os arquivos foram enviados
     if class_members_data.nil? || classes_data.nil?
       flash[:alert] = "Ambos os arquivos 'class_members.json' e 'classes.json' devem ser enviados."
       redirect_to new_admin_import_path
       return
     end
 
-    # Processa os dados dos arquivos
     process_class_members(class_members_data, dataList)
     process_classes(classes_data, dataList)
 
@@ -114,16 +53,17 @@ class Admin::ImportsController < ApplicationController
       puts "==== End Imported Data Debug ===="
     end
 
-    # populate DB (if overwrite is on replace any match)
     populate_database(dataList, overwrite)
 
-    # Redirect or render as needed
     redirect_to new_admin_import_path, notice: "✅ Dados importados com sucesso."
   rescue JSON::ParserError => _
-    # Handle JSON parsing errors
     redirect_to new_admin_import_path, alert: "❌ Erro de processamento."
   end
 
+  # Método utilizado para gerar uma saída de debug dos dados importados.
+  #
+  # @param [Array] dataList Lista de dados importados.
+  # @return [void] Retorna nada, mas imprime informações no console de depuração.
   def debug_console(dataList)
     dataList.each do |subject|
       puts "Subject: Code=#{subject.code}, Name=#{subject.name}, Department=(#{subject.department.name})"
@@ -142,8 +82,13 @@ class Admin::ImportsController < ApplicationController
     end
   end
 
+  # Método para processar os dados do arquivo 'classes.json'.
+  # - Recebe os dados de 'classes.json' e os adiciona à lista de objetos de dados.
+  #
+  # @param [Array] data Dados extraídos do arquivo 'classes.json'.
+  # @param [Array] dataList Lista que armazena os dados processados.
+  # @return [void] Retorna nada, mas altera o conteúdo da lista de dados.
   def process_classes(data, dataList = [])
-    # Process records from classes.json
     data.each do |record|
       subjectData = ImportSubject.new
       subjectData.code = record.dig("code")
@@ -154,10 +99,8 @@ class Admin::ImportsController < ApplicationController
       classData.semester = record.dig("class", "semester")
       classData.time = record.dig("class", "time")
 
-      # if the subject already exists only add the new classes into it
       existing_subject = dataList.find { |d| d.code == subjectData.code }
       if existing_subject
-        # check if it has an turma with the same classCode
         existing_class = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
         if existing_class
           existing_subject.name = subjectData.name
@@ -172,8 +115,13 @@ class Admin::ImportsController < ApplicationController
     end
   end
 
+  # Método para processar os dados do arquivo 'class_members.json'.
+  # - Recebe os dados de 'class_members.json' e os adiciona à lista de objetos de dados.
+  #
+  # @param [Array] data Dados extraídos do arquivo 'class_members.json'.
+  # @param [Array] dataList Lista que armazena os dados processados.
+  # @return [void] Retorna nada, mas altera o conteúdo da lista de dados.
   def process_class_members(data, dataList = [])
-    # Process records from 'class_members.json'
     data.each do |record|
       subjectData = ImportSubject.new
       subjectData.code = record.dig("code")
@@ -208,10 +156,8 @@ class Admin::ImportsController < ApplicationController
       userData.department = departmentData
       classData.docente = userData
 
-      # if the subject already exists only add the new classes into it
       existing_subject = dataList.find { |d| d.code == subjectData.code }
       if existing_subject
-        # check if it has an turma with the same classCode
         existing_class = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
         if existing_class
           existing_class.alunos = classData.alunos
@@ -225,44 +171,48 @@ class Admin::ImportsController < ApplicationController
       end
     end
   end
-end
 
-def populate_database(dataList, overwrite)
-  dataList.each do |subject|
-    department = Department.find_or_create_by(name: subject.department.name)
+  # Método responsável por popular o banco de dados com os dados importados.
+  # - Recebe uma lista de dados importados e insere ou atualiza os registros no banco de dados.
+  #
+  # @param [Array] dataList Lista de dados importados.
+  # @param [Boolean] overwrite Flag para sobrescrever dados existentes.
+  # @return [void] Retorna nada, mas realiza alterações no banco de dados.
+  def populate_database(dataList, overwrite)
+    dataList.each do |subject|
+      department = Department.find_or_create_by(name: subject.department.name)
 
-    subject_record = Subject.find_or_initialize_by(code: subject.code)
-    if subject_record.new_record?
-      subject_record.update(name: subject.name, department: department)
-    end
-
-    subject.turmas.each do |turma|
-      teacher = User.find_or_initialize_by(matricula: turma.docente.matricula)
-      if teacher.new_record?
-        teacher.update(nome: turma.docente.name, role: 1, password: turma.docente.password, password_confirmation: turma.docente.password, confirmed_at: Time.now, highest_degree: turma.docente.highest_degree, active_degree: turma.docente.active_degree, email: turma.docente.email)
+      subject_record = Subject.find_or_initialize_by(code: subject.code)
+      if subject_record.new_record?
+        subject_record.update(name: subject.name, department: department)
       end
 
-      classroom = Classroom.find_or_initialize_by(code: turma.classCode, subject: subject_record)
-      if classroom.new_record?
-        if teacher.present?
-          # TODO=options: remove nullable || create a dummy user that represents the abscence of a teacher
-          # puts "GENERATED"
-          teacher = User.where(role: :teacher).order("RANDOM()").first
-        end
-        classroom.update(semester: turma.semester, time: turma.time, subject: subject_record, teacher: teacher)
-      end
-
-      if overwrite
-        classroom.enrollments.destroy_all
-      end
-
-      turma.alunos.each do |enrollment|
-        student = User.find_or_initialize_by(matricula: enrollment.user.matricula)
-        if student.new_record?
-          student.update(nome: enrollment.user.name, role: 0, password: enrollment.user.password, password_confirmation: enrollment.user.password, confirmed_at: Time.now, highest_degree: enrollment.user.highest_degree, active_degree: enrollment.user.active_degree, email: enrollment.user.email)
+      subject.turmas.each do |turma|
+        teacher = User.find_or_initialize_by(matricula: turma.docente.matricula)
+        if teacher.new_record?
+          teacher.update(nome: turma.docente.name, role: 1, password: turma.docente.password, password_confirmation: turma.docente.password, confirmed_at: Time.now, highest_degree: turma.docente.highest_degree, active_degree: turma.docente.active_degree, email: turma.docente.email)
         end
 
-        Enrollment.create(user: student, classroom: classroom)
+        classroom = Classroom.find_or_initialize_by(code: turma.classCode, subject: subject_record)
+        if classroom.new_record?
+          if teacher.present?
+            teacher = User.where(role: :teacher).order("RANDOM()").first
+          end
+          classroom.update(semester: turma.semester, time: turma.time, subject: subject_record, teacher: teacher)
+        end
+
+        if overwrite
+          classroom.enrollments.destroy_all
+        end
+
+        turma.alunos.each do |enrollment|
+          student = User.find_or_initialize_by(matricula: enrollment.user.matricula)
+          if student.new_record?
+            student.update(nome: enrollment.user.name, role: 0, password: enrollment.user.password, password_confirmation: enrollment.user.password, confirmed_at: Time.now, highest_degree: enrollment.user.highest_degree, active_degree: enrollment.user.active_degree, email: enrollment.user.email)
+          end
+
+          Enrollment.create(user: student, classroom: classroom)
+        end
       end
     end
   end
