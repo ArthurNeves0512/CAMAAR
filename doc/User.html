@@ -9,7 +9,7 @@
 
   <meta name="keywords" content="ruby,class,User">
 
-    <meta name="description" content="class User: Modelo que representa um usuário no sistema. A classe User é responsável pela autenticação e pelos relacionamentos com outras entidades, como departam">
+    <meta name="description" content="class User: User Model O modelo `User` é responsável por gerenciar as informações e autenticação dos usuários no sistema. Ele inclui funcionalidades do Devise pa">
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "./";
@@ -70,11 +70,20 @@
 
 
   <ul class="link-list" role="directory">
-              <li>      <a href="#class-User-label-M-C3-B3dulos+do+Devise">Módulos do Devise</a>
+              <li>      <a href="#class-User-label-User+Model">User Model</a>
           <li>      <a href="#class-User-label-Associa-C3-A7-C3-B5es">Associações</a>
           <li>      <a href="#class-User-label-Valida-C3-A7-C3-B5es">Validações</a>
-          <li>      <a href="#class-User-label-M-C3-A9todo+de+autentica-C3-A7-C3-A3o+personalizado">Método de autenticação personalizado</a>
-          <li>      <a href="#class-User-label-Exemplo+de+c-C3-B3digo-3A">Exemplo de código:</a>
+          <li>      <a href="#class-User-label-Enumera-C3-A7-C3-A3o+de+Papel+-28role-29">Enumeração de Papel (role)</a>
+          <li>
+            <details open>
+              <summary>      <a href="#class-User-label-M-C3-A9todos">Métodos</a>
+</summary>
+              <ul class="link-list" role="directory">
+                          <li>      <a href="#class-User-label-60find_for_database_authentication-60">‘find_for_database_authentication`</a>
+
+              </ul>
+            </details>
+          </li>
 
   </ul>
 </div>
@@ -114,52 +123,53 @@
 
   <section class="description">
     
-<p>app/models/user.rb</p>
+<h2 id="class-User-label-User+Model"><a href="User.html"><code>User</code></a> Model<span><a href="#class-User-label-User+Model">&para;</a> <a href="#top">&uarr;</a></span></h2>
 
-<p>Modelo que representa um usuário no sistema. A classe <a href="User.html"><code>User</code></a> é responsável pela autenticação e pelos relacionamentos com outras entidades, como departamentos, salas de aula, submissões e matrículas.</p>
-
-<h2 id="class-User-label-M-C3-B3dulos+do+Devise">Módulos do Devise<span><a href="#class-User-label-M-C3-B3dulos+do+Devise">&para;</a> <a href="#top">&uarr;</a></span></h2>
-<ul><li>
-<p><code>:database_authenticatable</code> - Habilita a autenticação via banco de dados com email e senha.</p>
-</li><li>
-<p><code>:registerable</code> - Permite o registro de novos usuários.</p>
-</li><li>
-<p><code>:recoverable</code> - Habilita a recuperação de senha.</p>
-</li><li>
-<p><code>:rememberable</code> - Permite manter a sessão ativa com a funcionalidade “lembrar-me”.</p>
-</li><li>
-<p><code>:validatable</code> - Realiza a validação de formato de email e senha.</p>
-</li></ul>
+<p>O modelo ‘User` é responsável por gerenciar as informações e autenticação dos usuários no sistema. Ele inclui funcionalidades do Devise para autenticação e controle de senhas, além de validar e gerenciar os papéis dos usuários e suas associações com outras entidades no sistema.</p>
 
 <h2 id="class-User-label-Associa-C3-A7-C3-B5es">Associações<span><a href="#class-User-label-Associa-C3-A7-C3-B5es">&para;</a> <a href="#top">&uarr;</a></span></h2>
 <ul><li>
-<p>+belongs_to :department+ - Indica que um usuário pode pertencer a um departamento. A associação é opcional.</p>
+<p>‘belongs_to :department` - O usuário pode pertencer a um departamento. Esse relacionamento é opcional.</p>
 </li><li>
-<p>+has_many :classrooms+ - Um usuário pode estar associado a muitas salas de aula.</p>
+<p>‘has_many :classrooms` - O usuário pode ter várias salas de aula.</p>
 </li><li>
-<p>+has_many :submissions+ - Um usuário pode ter muitas submissões de questionários.</p>
+<p>‘has_many :submissions` - O usuário pode ter várias submissões (presumivelmente de avaliações).</p>
 </li><li>
-<p>+has_many :enrollments+ - Um usuário pode estar matriculado em várias turmas.</p>
+<p>‘has_many :enrollments` - O usuário pode ter várias matrículas em turmas.</p>
 </li><li>
-<p>+has_many :classrooms, through: :enrollments+ - Um usuário pode acessar as salas de aula através das suas inscrições.</p>
+<p>‘has_many :classrooms, through: :enrollments` - O usuário pode acessar as turmas por meio de matrículas.</p>
 </li><li>
-<p>+has_one :coordinator+ - Um usuário pode ter um coordenador associado.</p>
+<p>‘has_one :coordinator` - O usuário pode ter um coordenador associado, no caso de ser um professor ou similar.</p>
 </li></ul>
 
 <h2 id="class-User-label-Valida-C3-A7-C3-B5es">Validações<span><a href="#class-User-label-Valida-C3-A7-C3-B5es">&para;</a> <a href="#top">&uarr;</a></span></h2>
 <ul><li>
-<p><code>matricula</code> deve ser obrigatória, única e ter no máximo 45 caracteres.</p>
+<p>‘validates :matricula` - A matrícula do usuário é obrigatória e deve ser única. Seu comprimento máximo é de 45 caracteres.</p>
 </li><li>
-<p><code>nome</code> deve ser obrigatório e ter no máximo 100 caracteres.</p>
+<p>‘validates :nome` - O nome do usuário é obrigatório e seu comprimento máximo é de 100 caracteres.</p>
 </li></ul>
 
-<h2 id="class-User-label-M-C3-A9todo+de+autentica-C3-A7-C3-A3o+personalizado">Método de autenticação personalizado<span><a href="#class-User-label-M-C3-A9todo+de+autentica-C3-A7-C3-A3o+personalizado">&para;</a> <a href="#top">&uarr;</a></span></h2>
+<h2 id="class-User-label-Enumera-C3-A7-C3-A3o+de+Papel+-28role-29">Enumeração de Papel (role)<span><a href="#class-User-label-Enumera-C3-A7-C3-A3o+de+Papel+-28role-29">&para;</a> <a href="#top">&uarr;</a></span></h2>
+<ul><li>
+<p>O atributo ‘role` usa uma enumeração com três papéis possíveis:</p>
+<ul><li>
+<p>‘student` (0): Usuário do tipo estudante.</p>
+</li><li>
+<p>‘teacher` (1): Usuário do tipo professor.</p>
+</li><li>
+<p>‘admin` (2): Usuário do tipo administrador.</p>
+</li></ul>
+</li><li>
+<p>O valor padrão é ‘student`.</p>
+</li></ul>
 
-<p>O método <a href="User.html#method-c-find_for_database_authentication"><code>find_for_database_authentication</code></a> permite autenticar um usuário por email ou matrícula. O método busca no banco de dados usuários que tenham o email ou matrícula correspondentes.</p>
+<h2 id="class-User-label-M-C3-A9todos">Métodos<span><a href="#class-User-label-M-C3-A9todos">&para;</a> <a href="#top">&uarr;</a></span></h2>
 
-<h2 id="class-User-label-Exemplo+de+c-C3-B3digo-3A">Exemplo de código:<span><a href="#class-User-label-Exemplo+de+c-C3-B3digo-3A">&para;</a> <a href="#top">&uarr;</a></span></h2>
+<h3 id="class-User-label-60find_for_database_authentication-60">‘find_for_database_authentication`<span><a href="#class-User-label-60find_for_database_authentication-60">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
-<p>user = <a href="User.html#method-c-find_for_database_authentication"><code>User.find_for_database_authentication</code></a>(email: ‘user@example.com’) user.authenticate(‘password’)</p>
+<p>Método responsável por autenticar um usuário com base no email ou matrícula. Este método é utilizado pelo Devise para permitir o login.</p>
+
+<p>@param [Hash] warden_conditions Condições de autenticação, geralmente incluindo o email ou matrícula do usuário. @return [User, nil] Retorna o usuário correspondente ou ‘nil` se não encontrado.</p>
 
   </section>
 
@@ -192,18 +202,18 @@
 
         <div class="method-description">
           <div class="method-source-code" id="find_for_database_authentication-source">
-            <pre><span class="ruby-comment"># File app/models/user.rb, line 61</span>
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 63</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find_for_database_authentication</span>(<span class="ruby-identifier">warden_conditions</span>)
   <span class="ruby-identifier">conditions</span> = <span class="ruby-identifier">warden_conditions</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">login</span> = <span class="ruby-identifier">conditions</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:email</span>).<span class="ruby-identifier">downcase</span>
 
-  <span class="ruby-comment"># Busca por email OU matrícula (tratamento insensível a maiúsculas/minúsculas)</span>
+  <span class="ruby-comment"># Busca por email OU matrícula</span>
   <span class="ruby-identifier">where</span>(<span class="ruby-identifier">conditions</span>).<span class="ruby-identifier">where</span>(
-    [<span class="ruby-string">&quot;lower(email) = :value OR lower(matricula) = :value&quot;</span>, { <span class="ruby-value">value:</span> <span class="ruby-identifier">login</span> } ]
+    [<span class="ruby-string">&quot;lower(email) = :value OR lower(matricula) = :value&quot;</span>, { <span class="ruby-value">value:</span> <span class="ruby-identifier">login</span> }]
   ).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
-          <p>Método de autenticação personalizada</p>
+          <p>Método de autenticação personalizado, que permite o login com email ou matrícula.</p>
         </div>
 
 

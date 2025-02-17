@@ -1,13 +1,15 @@
 # Controller responsável por gerenciar a recuperação e redefinição de senha dos usuários.
 # Este controlador substitui alguns métodos padrões do Devise para personalizar o fluxo de recuperação de senha.
 class Users::PasswordsController < Devise::PasswordsController
-  skip_before_action :require_no_authentication, only: [ :create, :update ]
+  # Pula a verificação de autenticação para as ações create e update
+  skip_before_action :require_no_authentication, only: [:create, :update]
 
   # Sobrescreve o método create para verificar apenas o email
   #
+  # Inicia o processo de recuperação de senha verificando o e-mail do usuário e gerando um token de redefinição.
+  #
   # @param [Hash] params Parâmetros enviados pelo formulário de recuperação de senha.
   # @option params [String] :user[:email] O endereço de e-mail do usuário que deseja redefinir a senha.
-  #   O e-mail será utilizado para localizar o usuário e iniciar o processo de redefinição de senha.
   #
   # @return [Redirect] Redireciona para a página de redefinição de senha ou apresenta um alerta de erro.
   def create
@@ -38,6 +40,8 @@ class Users::PasswordsController < Devise::PasswordsController
 
   # Renderiza a tela de edição da senha
   #
+  # Exibe o formulário de redefinição de senha se o token fornecido for válido.
+  #
   # @param [Hash] params Parâmetros enviados com o token de redefinição.
   # @option params [String] :reset_password_token Token gerado para redefinir a senha do usuário.
   #
@@ -51,6 +55,8 @@ class Users::PasswordsController < Devise::PasswordsController
   end
 
   # Atualiza a senha do usuário
+  #
+  # Define a nova senha do usuário e o autentica automaticamente.
   #
   # @param [Hash] params Parâmetros enviados com a nova senha.
   # @option params [String] :user[:password] A nova senha definida pelo usuário.
@@ -71,6 +77,9 @@ class Users::PasswordsController < Devise::PasswordsController
 
   private
 
+  # Filtra os parâmetros necessários para redefinir a senha
+  #
+  # @return [Hash] Parâmetros filtrados contendo as chaves :password, :password_confirmation e :reset_password_token.
   def password_params
     params.fetch(:user, {}).permit(:password, :password_confirmation, :reset_password_token)
   end

@@ -1,45 +1,44 @@
-# app/models/user.rb
+# == User Model
 #
-# Modelo que representa um usuário no sistema. A classe User é responsável pela autenticação
-# e pelos relacionamentos com outras entidades, como departamentos, salas de aula, submissões e matrículas.
-#
-# == Módulos do Devise
-#
-# - +:database_authenticatable+ - Habilita a autenticação via banco de dados com email e senha.
-# - +:registerable+ - Permite o registro de novos usuários.
-# - +:recoverable+ - Habilita a recuperação de senha.
-# - +:rememberable+ - Permite manter a sessão ativa com a funcionalidade "lembrar-me".
-# - +:validatable+ - Realiza a validação de formato de email e senha.
+# O modelo `User` é responsável por gerenciar as informações e autenticação dos usuários no sistema.
+# Ele inclui funcionalidades do Devise para autenticação e controle de senhas, além de validar e gerenciar os papéis dos usuários e suas associações com outras entidades no sistema.
 #
 # == Associações
-#
-# - +belongs_to :department+ - Indica que um usuário pode pertencer a um departamento. A associação é opcional.
-# - +has_many :classrooms+ - Um usuário pode estar associado a muitas salas de aula.
-# - +has_many :submissions+ - Um usuário pode ter muitas submissões de questionários.
-# - +has_many :enrollments+ - Um usuário pode estar matriculado em várias turmas.
-# - +has_many :classrooms, through: :enrollments+ - Um usuário pode acessar as salas de aula através das suas inscrições.
-# - +has_one :coordinator+ - Um usuário pode ter um coordenador associado.
+# 
+# * `belongs_to :department` - O usuário pode pertencer a um departamento. Esse relacionamento é opcional.
+# * `has_many :classrooms` - O usuário pode ter várias salas de aula.
+# * `has_many :submissions` - O usuário pode ter várias submissões (presumivelmente de avaliações).
+# * `has_many :enrollments` - O usuário pode ter várias matrículas em turmas.
+# * `has_many :classrooms, through: :enrollments` - O usuário pode acessar as turmas por meio de matrículas.
+# * `has_one :coordinator` - O usuário pode ter um coordenador associado, no caso de ser um professor ou similar.
 #
 # == Validações
 #
-# - +matricula+ deve ser obrigatória, única e ter no máximo 45 caracteres.
-# - +nome+ deve ser obrigatório e ter no máximo 100 caracteres.
+# * `validates :matricula` - A matrícula do usuário é obrigatória e deve ser única. Seu comprimento máximo é de 45 caracteres.
+# * `validates :nome` - O nome do usuário é obrigatório e seu comprimento máximo é de 100 caracteres.
 #
-# == Método de autenticação personalizado
+# == Enumeração de Papel (role)
 #
-# O método +find_for_database_authentication+ permite autenticar um usuário por email ou matrícula.
-# O método busca no banco de dados usuários que tenham o email ou matrícula correspondentes.
+# * O atributo `role` usa uma enumeração com três papéis possíveis:
+#   - `student` (0): Usuário do tipo estudante.
+#   - `teacher` (1): Usuário do tipo professor.
+#   - `admin` (2): Usuário do tipo administrador.
+# * O valor padrão é `student`.
 #
-# == Exemplo de código:
-# user = User.find_for_database_authentication(email: 'user@example.com')
-# user.authenticate('password')
+# == Métodos
 #
-
+# === `find_for_database_authentication`
+# 
+# Método responsável por autenticar um usuário com base no email ou matrícula. Este método é utilizado pelo Devise para permitir o login.
+#
+# @param [Hash] warden_conditions Condições de autenticação, geralmente incluindo o email ou matrícula do usuário.
+# @return [User, nil] Retorna o usuário correspondente ou `nil` se não encontrado.
+#
 class User < ApplicationRecord
-  # Módulos do Devise para autenticação
+  # Adiciona os módulos do Devise para autenticação
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
 
-  # Relacionamentos com outras entidades
+  # Associações
   belongs_to :department, optional: true
   has_many :classrooms
   has_many :submissions
@@ -47,7 +46,10 @@ class User < ApplicationRecord
   has_many :classrooms, through: :enrollments
   has_one :coordinator
 
-  # Validação dos atributos
+  # Enumeração de papel (role)
+  enum :role, { student: 0, teacher: 1, admin: 2 }, default: :student
+
+  # Validações
   validates :matricula,
     presence: { message: " é obrigatória" },
     uniqueness: { message: " já está em uso" },
@@ -57,14 +59,14 @@ class User < ApplicationRecord
     presence: { message: " é obrigatório" },
     length: { maximum: 100 }
 
-  # Método de autenticação personalizada
+  # Método de autenticação personalizado, que permite o login com email ou matrícula.
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
     login = conditions.delete(:email).downcase
 
-    # Busca por email OU matrícula (tratamento insensível a maiúsculas/minúsculas)
+    # Busca por email OU matrícula
     where(conditions).where(
-      ["lower(email) = :value OR lower(matricula) = :value", { value: login } ]
+      ["lower(email) = :value OR lower(matricula) = :value", { value: login }]
     ).first
   end
 end

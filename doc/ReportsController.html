@@ -9,7 +9,7 @@
 
   <meta name="keywords" content="ruby,class,ReportsController">
 
-    <meta name="description" content="Documentation for the ReportsController class">
+    <meta name="description" content="class ReportsController: Controlador responsável por operações de geração de relatórios, incluindo exportação de resultados de questionários para CSV.">
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "./";
@@ -99,6 +99,8 @@
 
   <section class="description">
     
+<p>Controlador responsável por operações de geração de relatórios, incluindo exportação de resultados de questionários para CSV.</p>
+
   </section>
 
   <section id="5Buntitled-5D" class="documentation-section anchor-link">
@@ -130,27 +132,22 @@
 
         <div class="method-description">
           <div class="method-source-code" id="export_to_csv-source">
-            <pre><span class="ruby-comment"># File app/controllers/reports_controller.rb, line 12</span>
+            <pre><span class="ruby-comment"># File app/controllers/reports_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">export_to_csv</span>
-  <span class="ruby-comment"># Encontra o questionário com base no ID passado na URL</span>
   <span class="ruby-identifier">questionnaire</span> = <span class="ruby-constant">Questionnaire</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
 
-  <span class="ruby-comment"># Se o questionário não tiver respostas, mostra uma mensagem de alerta e redireciona</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">questionnaire</span>.<span class="ruby-identifier">answers</span>.<span class="ruby-identifier">empty?</span>
-    <span class="ruby-identifier">flash</span>[<span class="ruby-value">:alert</span>] = <span class="ruby-string">&quot;Este formulário não possui resultados para exportar.&quot;</span>
-    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">admin_results_path</span>
+    <span class="ruby-identifier">handle_empty_questionnaire</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-comment"># Caso contrário, gera o CSV com as respostas</span>
-    <span class="ruby-identifier">csv_data</span> = <span class="ruby-identifier">generate_csv</span>(<span class="ruby-identifier">questionnaire</span>)
-
-    <span class="ruby-comment"># Envia o arquivo CSV para download com o nome baseado no questionário</span>
-    <span class="ruby-identifier">send_data</span> <span class="ruby-identifier">csv_data</span>, <span class="ruby-value">filename:</span> <span class="ruby-node">&quot;relatorio_formulario_#{questionnaire.classroom_info}.csv&quot;</span>, <span class="ruby-value">type:</span> <span class="ruby-string">&quot;text/csv&quot;</span>
+    <span class="ruby-identifier">send_csv_export</span>(<span class="ruby-identifier">questionnaire</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
-          <p>Método responsável por exportar os resultados de um questionário para um arquivo CSV</p>
+          <p>Exporta os resultados de um questionário para um arquivo CSV.</p>
 
-<p>@param [Integer] id O ID do questionário a ser exportado @return [File] Arquivo CSV contendo os resultados do questionário @effect Gera e envia o arquivo CSV para o download, caso o questionário tenha respostas. Se não houver respostas, exibe uma mensagem de alerta e redireciona para a página de resultados.</p>
+<p>@param [Integer] id O ID do questionário a ser exportado. @return [File] Arquivo CSV contendo os resultados do questionário. @effect Se o questionário tiver respostas, gera e envia o arquivo CSV para download.</p>
+
+<pre>Caso contrário, exibe uma mensagem de alerta e redireciona para a página de resultados.</pre>
         </div>
 
 
