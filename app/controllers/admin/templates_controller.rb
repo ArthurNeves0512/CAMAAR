@@ -9,26 +9,23 @@ class Admin::TemplatesController < ApplicationController
       @template = Template.new
       @show_modal = false
     rescue StandardError => e
-      @templates=[]
-      @template=Template.new
+      @templates = []
+      @template = Template.new
       flash.now[:alert] = "Não foi possível carregar os templates no momento. Tente novamente mais tarde: '#{e}'"
       render :index
     end
-    
-    
   end
 
-  
   def edit
   end
-  
+
   def update
     # Atualiza o template com os parâmetros do formulário
     begin
       @template.update(template_params)
       redirect_to admin_template_path(@template), notice: "Template atualizado com sucesso!"
     rescue StandardError => e
-      flash.now[:alert]="Erro ao atualizar o template: '#{e}'" 
+      flash.now[:alert] = "Erro ao atualizar o template: '#{e}'"
       render :edit
     end
   end
@@ -54,7 +51,6 @@ class Admin::TemplatesController < ApplicationController
       redirect_to admin_templates_path, alert: "Erro ao excluir o template: #{e.message}"
     end
   end
-  
 
   private
 

@@ -18,14 +18,14 @@ class SubmissionsController < ApplicationController
           @submission.answers.create(
             question: question,
             value: value,  # O valor é o texto da opção
-            questionnaire: @questionnaire
+            questionnaire: @questionnaire,
           )
         else
           # Criação para perguntas dissertativas
           @submission.answers.create(
             question: question,
             value: value,
-            questionnaire: @questionnaire
+            questionnaire: @questionnaire,
           )
         end
       end
