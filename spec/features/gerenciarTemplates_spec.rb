@@ -95,6 +95,20 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
     expect(page).to have_content("Editar Template")
     expect(page).to have_field("template[name]", with: "Avaliação 1")
+    expect(page).to have_field("template[semester]", with: "2025/1")
+
+    fill_in "template[name]", with: "Avaliação 2"
+    fill_in "template[semester]", with: "2027/2"
+  
+    # Submeter o formulário
+    click_button "Salvar"
+
+    expect(page).to have_content("Template atualizado com sucesso")
+  
+  # Verificar se o valor foi realmente atualizado no banco
+  @template1.reload
+  expect(@template1.name).to eq("Avaliação 2")
+  expect(@template1.semester).to eq("2027/2")
   end
 
   scenario "Excluir template" do

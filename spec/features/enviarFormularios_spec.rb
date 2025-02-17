@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Enviar formulários", type: :feature do
-RSpec.feature "Enviar formulários", type: :feature do
   background do
     # Criar um usuário admin
     user_adm = User.create!(

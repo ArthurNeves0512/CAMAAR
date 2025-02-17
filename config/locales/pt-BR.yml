@@ -2,6 +2,12 @@ pt-BR:
   activerecord:
     errors:
       models:
+        coordinator:
+          attributes:
+            user:
+              required: "não pode ficar em branco"
+            department:
+              required: "não pode ficar em branco"
         user:
           attributes:
             email:
@@ -15,6 +21,8 @@ pt-BR:
               blank: "é obrigatório"
             password_confirmation:
               confirmation: "não é igual a Password"
+    messages:
+      record_invalid: "Ocorreu um erro ao salvar o registro. Por favor, tente novamente."
 
   errors:
     messages:
