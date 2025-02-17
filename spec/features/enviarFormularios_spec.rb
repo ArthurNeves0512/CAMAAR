@@ -28,7 +28,7 @@ RSpec.feature "Importar dados do SIGAA", type: :feature do
     # Abrir o modal e esperar ele carregar
     expect(page).to have_button('Enviar Formulários')
     click_button('Enviar Formulários')
-
+   save_and_open_page
     
     expect(page).to have_selector("#modal", visible: true)
   
