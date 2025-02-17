@@ -47,7 +47,7 @@ class ReportsController < ApplicationController
     # Gera o CSV com cabeçalhos e os dados das respostas
     CSV.generate(headers: true) do |csv|
       # Cabeçalhos do CSV
-      csv << ["Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta"]
+      csv << [ "Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta" ]
 
       # Coleta os resultados das respostas para o questionário
       results = Answer
@@ -65,7 +65,7 @@ class ReportsController < ApplicationController
 
       # Adiciona cada resultado ao CSV
       results.each do |result|
-        csv << [result.answer_id, result.user_name, result.questionnaire_name, result.question_text, result.answer_value]
+        csv << [ result.answer_id, result.user_name, result.questionnaire_name, result.question_text, result.answer_value ]
       end
     end
   end

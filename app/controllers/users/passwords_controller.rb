@@ -1,11 +1,7 @@
 # Controller responsável por gerenciar a recuperação e redefinição de senha dos usuários.
 # Este controlador substitui alguns métodos padrões do Devise para personalizar o fluxo de recuperação de senha.
 class Users::PasswordsController < Devise::PasswordsController
-  # Impede a autenticação para as ações de criação e atualização de senha
-  skip_before_action :require_no_authentication, only: [:create, :update]
-  
-  # Valida a sessão antes de permitir o acesso à tela de edição da senha
-  before_action :validate_session, only: [:edit]
+  skip_before_action :require_no_authentication, only: [ :create, :update ]
 
   # Sobrescreve o método create para verificar apenas o email
   #
@@ -75,18 +71,6 @@ class Users::PasswordsController < Devise::PasswordsController
 
   private
 
-  # Valida a presença do token de redefinição de senha antes de permitir o acesso à página de edição.
-  #
-  # @return [Redirect] Redireciona para a página de nova senha se o token estiver ausente ou inválido.
-  def validate_session
-    unless params[:reset_password_token].present?
-      redirect_to new_user_password_path, alert: "Token inválido ou expirado. Solicite a recuperação de senha novamente."
-    end
-  end
-
-  # Define os parâmetros permitidos para atualizar a senha.
-  #
-  # @return [Hash] Parâmetros permitidos para a atualização de senha.
   def password_params
     params.fetch(:user, {}).permit(:password, :password_confirmation, :reset_password_token)
   end

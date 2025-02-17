@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_questionnaire, only: [:create]
+  before_action :set_questionnaire, only: [ :create ]
 
   # Método responsável por criar uma submissão de respostas para um questionário
   #
