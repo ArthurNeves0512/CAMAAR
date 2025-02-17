@@ -40,17 +40,17 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
     # Verificar se a página de templates foi carregada corretamente
     expect(page).to have_content("Gerenciamento - Editar Templates")
-    
+
     # Clicar no botão de adicionar novo template (ícone de '+')
     find('div[onclick="openModal()"]').click
-    
+
     # Verificar se o modal de criação foi aberto
     expect(page).to have_content('Criar Template')
 
     # Preencher o formulário de criação
     fill_in 'template[name]', with: 'Avaliação 3'  # Usando o nome do campo 'template[name]'
     fill_in 'template[semester]', with: '2025/3'
-    
+
     # Enviar o formulário
     click_button 'Criar'
 
@@ -62,24 +62,24 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
   scenario "Cancelar a criação de um novo template" do
     visit admin_templates_path
-  
+
     # Verificar se a página de templates foi carregada corretamente
     expect(page).to have_content("Gerenciamento - Editar Templates")
-    
+
     # Clicar no botão de adicionar novo template (ícone de '+')
     find('div[onclick="openModal()"]').click
-    
+
     # Verificar se o modal de criação foi aberto
     expect(page).to have_content('Criar Template')
-  
+
     # Clicar no botão de cancelar (presumindo que o botão de cancelar tem uma classe ou texto)
     click_button 'Cancelar' # ou o nome da classe do botão de cancelamento
-    
+
     # Verificar se o modal foi fechado e a página de templates foi recarregada
     expect(page).to have_content("Gerenciamento - Editar Templates")
   end
 
-  scenario 'Editar um template' do 
+  scenario 'Editar um template' do
     visit admin_templates_path
     # Acessar a página de templates
     # visit admin_templates_path
@@ -95,6 +95,20 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
 
     expect(page).to have_content("Editar Template")
     expect(page).to have_field("template[name]", with: "Avaliação 1")
+    expect(page).to have_field("template[semester]", with: "2025/1")
+
+    fill_in "template[name]", with: "Avaliação 2"
+    fill_in "template[semester]", with: "2027/2"
+
+    # Submeter o formulário
+    click_button "Salvar"
+
+    expect(page).to have_content("Template atualizado com sucesso")
+
+  # Verificar se o valor foi realmente atualizado no banco
+  @template1.reload
+  expect(@template1.name).to eq("Avaliação 2")
+  expect(@template1.semester).to eq("2027/2")
   end
 
   scenario "Excluir template" do
@@ -159,36 +173,105 @@ RSpec.feature "Gerenciar templates criados", type: :feature do
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
     find('span', text: 'Excluir').click
-    #save_and_open_page
-
-
+    # save_and_open_page
   end
-  
+
   scenario "Criar uma nova questão" do
     visit admin_templates_path
     find("a[href='/admin/templates/#{@template1.id}/edit']").click
-    
+
     # Clicar no link para adicionar uma nova questão
     click_link "Adicionar Questão"
-    
+
     # Verificar se a página de criação de questão foi carregada
     expect(page).to have_content("Criar Nova Questão")
-    
+
     # Preencher os campos para criar uma nova questão
     fill_in "Nome da Questão", with: "Qual é a sua opinião sobre o curso?"
     fill_in "Texto da Questão", with: "Descreva sua opinião sobre o curso de Ciência da Computação."
     select "Múltipla escolha", from: "Tipo da Questão"
-    
+
     # Enviar o formulário
     click_button "Salvar Questão"
-    
+
     # Verificar se a questão foi criada com sucesso
     expect(page).to have_content("Questão criada com sucesso!")
-    
+
     # Verificar se a nova questão está visível no template
     expect(page).to have_content("Descreva sua opinião sobre o curso de Ciência da Computação.")
     expect(page).to have_content("Múltipla escolha")
   end
-  
+  scenario "Falha ao criar template com dados inválidos" do
+    visit admin_templates_path
+    find('div[onclick="openModal()"]').click
+    fill_in 'template[name]', with: ''
+    fill_in 'template[semester]', with: 'formato_invalido'
+    click_button 'Criar'
+    expect(page).to have_content("Erro ao criar o template")
+  end
 
+  scenario "Usuário não-admin não pode acessar gerenciamento de templates" do
+    click_button 'Sair'
+    user = User.create(nome: "User", email: "user@example.com", matricula: "123456", password: "senha123", password_confirmation: "senha123", role: "student")
+    visit root_path
+    click_link "Entrar"
+    fill_in "Email ou Matrícula", with: user.email
+    fill_in "Senha", with: user.password
+    click_button "Entrar"
+    visit admin_templates_path
+    expect(page).to have_content("Acesso não autorizado")
+    expect(current_path).to eq(root_path)
+  end
+
+  scenario "Visualizar lista vazia de templates" do
+    Template.destroy_all
+    expect(Template.count).to eq(0)
+    visit admin_templates_path
+    templates = all(".grid > div.templateCard")
+    expect(templates.count).to eq(0)
+  end
+
+  scenario "Excluir template com questões associadas" do
+    Question.create(name: "P1", text: "Texto", question_type: "texto", template: @template1)
+    visit admin_templates_path
+    expect(page).to have_content("Avaliação 1")
+    find("div.bg-white", text: "Avaliação 1").find('button[type="submit"]').click
+    expect(page).to have_content("Template excluído com sucesso!")
+    expect(Template.count).to eq(1)
+  end
+
+  scenario "Falha ao criar questão sem campos obrigatórios" do
+    visit admin_templates_path
+    find("a[href='/admin/templates/#{@template1.id}/edit']").click
+    click_link "Adicionar Questão"
+    fill_in "Nome da Questão", with: ""
+    fill_in "Texto da Questão", with: ""
+    click_button "Salvar Questão"
+    expect(page).to have_content("Erro ao criar a questão")
+  end
+
+  scenario "Criar questão do tipo texto" do
+    visit admin_templates_path
+    find("a[href='/admin/templates/#{@template1.id}/edit']").click
+    click_link "Adicionar Questão"
+    fill_in "Nome da Questão", with: "Feedback Geral"
+    fill_in "Texto da Questão", with: "Descreva sua experiência:"
+    select "Dissertativa", from: "Tipo da Questão"
+    click_button "Salvar Questão"
+    expect(page).to have_content("Questão criada com sucesso!")
+    expect(page).to have_content("Descreva sua experiência:")
+    expect(page).to have_content("Texto")
+  end
+
+  scenario "Excluir questão e verificar remoção" do
+    Question.create(name: "Q2", text: "Questão para excluir", question_type: "texto", template: @template1)
+    visit admin_templates_path
+    find("a[href='/admin/templates/#{@template1.id}/edit']").click
+    expect(page).to have_content("Questão para excluir")
+    within find("li:has(*:contains('Questão para excluir'))") do
+      click_button "Excluir"
+    end
+    expect(page).to have_content("Questão excluída com sucesso!")
+    expect(page).not_to have_content("Questão para excluir")
+  end
 end

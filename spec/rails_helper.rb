@@ -23,6 +23,7 @@ RSpec.configure do |config|
   # Configura helpers do Devise para diferentes tipos de testes
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::IntegrationHelpers, type: :request
 
   # Carrega automaticamente arquivos do diretório `spec/support/`
   Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }

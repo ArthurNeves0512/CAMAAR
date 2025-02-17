@@ -10,12 +10,4 @@ class Admin::ResultsController < ApplicationController
     @answers = Answer.all
   end
 
-  def new
-  end
-
-  def show
-  end
-
-  def create
-  end
 end
