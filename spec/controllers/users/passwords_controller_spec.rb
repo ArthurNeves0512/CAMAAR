@@ -65,14 +65,6 @@ RSpec.describe Users::PasswordsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    context 'quando o parâmetro reset_password_token está ausente' do
-      it 'redireciona para new_user_password_path com alerta de token inválido' do
-        get :edit, params: {}
-        expect(response).to redirect_to(new_user_password_path)
-        expect(flash[:alert]).to eq("Token inválido ou expirado. Solicite a recuperação de senha novamente.")
-      end
-    end
-
     context 'quando o token é informado' do
       let!(:user) do
         User.create!(

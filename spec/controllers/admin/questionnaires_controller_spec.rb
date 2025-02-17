@@ -55,7 +55,7 @@ RSpec.describe Admin::QuestionnairesController, type: :controller do
   let(:valid_params) do
     {
       template_id: template.id,
-      classroom_codes: [classroom.code],
+      classroom_codes: [ classroom.code ],
       name: "Questionário 1"
     }
   end
@@ -105,8 +105,7 @@ RSpec.describe Admin::QuestionnairesController, type: :controller do
           post :create, params: valid_params, format: :json
         }.to change(Questionnaire, :count).by(1)
 
-        expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)["success"]).to eq(true)
+        expect(flash[:notice]).to eq("✅ Formulários criados com sucesso.")
       end
     end
 
@@ -116,10 +115,7 @@ RSpec.describe Admin::QuestionnairesController, type: :controller do
           post :create, params: invalid_params, format: :json
         }.not_to change(Questionnaire, :count)
 
-        expect(response).to have_http_status(:ok)
-        parsed = JSON.parse(response.body)
-        expect(parsed["success"]).to eq(false)
-        expect(parsed["message"]).to eq("❌ Erro ao criar formulário")
+        expect(flash[:alert]).to eq("❌ Erro de processamento.")
       end
     end
   end

@@ -1,7 +1,3 @@
-
-
-
-
 <div class="flex h-screen bg-gray-200">
   <!-- Sidebar -->
   <div class="w-64 bg-white shadow-md">
@@ -14,7 +10,7 @@
     <!-- Grid de Templates Centralizado -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-lg w-full justify-items-center">
       <% @templates.each do |template| %>
-        <div class="bg-white p-4 rounded-lg shadow-md w-64">
+        <div class="bg-white p-4 rounded-lg shadow-md w-64 templateCard">
           <h2 class="font-semibold text-lg"><%= template.name %></h2>
           <p class="text-sm text-gray-600"><%= template.semester %></p>
           <!-- Ações -->

@@ -30,7 +30,7 @@ class Admin::QuestionnairesController < ApplicationController
       if @questionnaire.save
         redirect_to admin_root_path, notice: "✅ Formulários criados com sucesso."
       else
-        redirect_to admin_root_path, alert: "❌ Erro ao criar formulário."
+        redirect_to admin_root_path, alert: "❌ Erro de processamento."
       end
     end
 
