@@ -1,60 +1,72 @@
 require "csv"
 
+# Handles report generation operations including CSV exports for questionnaire results
 class ReportsController < ApplicationController
   before_action :authenticate_admin!
 
   def export_to_csv
-    # Encontre o questionário (formulário) para exportar
     questionnaire = Questionnaire.find(params[:id])
 
-    # Se o questionário não tiver respostas, mostre uma mensagem
     if questionnaire.answers.empty?
-      flash[:alert] = "Este formulário não possui resultados para exportar."
-      redirect_to admin_results_path
+      handle_empty_questionnaire
     else
-      # Caso contrário, gere o CSV
-      csv_data = generate_csv(questionnaire)
-
-      # Envia o arquivo CSV para download
-      send_data csv_data, filename: "relatorio_formulario_#{questionnaire.classroom_info}.csv", type: "text/csv"
+      send_csv_export(questionnaire)
     end
   end
 
   private
 
-  # Método de autenticação simples
   def authenticate_admin!
-    user = User.find(current_user.id)
-    unless user && user.role == "admin"
-      flash[:alert] = "Você precisa ser um administrador para acessar essa página."
-      redirect_to authenticated_root_path
+    return if current_user&.admin?
+
+    flash[:alert] = "Você precisa ser um administrador para acessar essa página."
+    redirect_to authenticated_root_path
+  end
+
+  def handle_empty_questionnaire
+    flash[:alert] = "Este formulário não possui resultados para exportar."
+    redirect_to admin_results_path
+  end
+
+  def send_csv_export(questionnaire)
+    csv_data = QuestionnaireCsvExporter.new(questionnaire).generate
+    filename = "relatorio_formulario_#{questionnaire.classroom_info}.csv"
+
+    send_data csv_data, filename: filename, type: "text/csv"
+  end
+end
+
+# Service object to handle CSV generation for questionnaires
+class QuestionnaireCsvExporter
+  CSV_HEADERS = [ "Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta" ].freeze
+
+  def initialize(questionnaire)
+    @questionnaire = questionnaire
+  end
+
+  def generate
+    CSV.generate(headers: true) do |csv|
+      csv << CSV_HEADERS
+      formatted_results.each { |result| csv << result }
     end
   end
 
-  # Método que gera o CSV
-  def generate_csv(questionnaire)
-    CSV.generate(headers: true) do |csv|
-      # Cabeçalhos do CSV
-      csv << [ "Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta" ]
+  private
 
-      # Coleta os resultados das respostas
-      results = Answer
-        .joins(:question)
-        .where(questionnaire_id: questionnaire.id) # Filtra respostas do questionário específico
-        .joins("JOIN submissions ON submissions.questionnaire_id = answers.questionnaire_id")
-        .joins("JOIN users ON submissions.user_id = users.id")
-        .select(
-          "answers.id AS answer_id,
-           users.nome AS user_name,
-           '#{questionnaire.name}' AS questionnaire_name,
-           questions.text AS question_text,
-           answers.value AS answer_value"
-        )
-
-      # Adiciona os dados ao CSV
-      results.each do |result|
-        csv << [ result.answer_id, result.user_name, result.questionnaire_name, result.question_text, result.answer_value ]
-      end
+  def formatted_results
+    questionnaire_answers.map do |answer|
+      [
+        answer.id,
+        answer.submission.user.nome,
+        @questionnaire.name,
+        answer.question.text,
+        answer.value
+      ]
     end
+  end
+
+  def questionnaire_answers
+    Answer.includes(:question, submission: :user)
+          .where(questionnaire_id: @questionnaire.id)
   end
 end

@@ -2,18 +2,17 @@ class Admin::ImportsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!
 
+  # Data classes used during import
   class ImportDepartment
     attr_accessor :name
-
     def initialize(name: "Não definido")
       @name = name
     end
   end
 
   class ImportUser
-    # based on users from class_members.json
-    attr_accessor :name, :email, :password, :role, :matricula, :highest_degree, :active_degree, :department
-
+    attr_accessor :name, :email, :password, :role, :matricula,
+                  :highest_degree, :active_degree, :department
     def initialize
       @name = ""
       @email = ""
@@ -28,16 +27,14 @@ class Admin::ImportsController < ApplicationController
 
   class ImportEnrollment
     attr_accessor :user, :classroom
-
     def initialize
       @user = ImportUser.new
-      @classroom = ImportClass
+      @classroom = ImportClass.new
     end
   end
 
   class ImportClass
     attr_accessor :classCode, :semester, :time, :docente, :alunos
-
     def initialize
       @classCode = ""
       @semester = ""
@@ -46,14 +43,13 @@ class Admin::ImportsController < ApplicationController
       @alunos = []
     end
 
-    def add_alunos(aluno)
-      @alunos << aluno
+    def add_alunos(enrollment)
+      @alunos << enrollment
     end
   end
 
   class ImportSubject
     attr_accessor :name, :code, :department, :turmas
-
     def initialize
       @name = ""
       @code = ""
@@ -68,202 +64,180 @@ class Admin::ImportsController < ApplicationController
 
   def create
     overwrite = params[:overwrite].present?
-
-    dataList = []
-
-    if params[:files].blank?
+    files = params[:files]
+    unless files.present?
       flash[:alert] = "Nenhum arquivo foi selecionado."
-      redirect_to new_admin_import_path
-      return
+      redirect_to new_admin_import_path and return
     end
 
-    # Inicializa variáveis para armazenar os conteúdos dos arquivos
     class_members_data = nil
     classes_data = nil
-
-    # Itera sobre os arquivos enviados
-    params[:files].each do |file|
+    files.each do |file|
       case file.original_filename
       when "class_members.json"
-        class_members_data = JSON.parse(file.read)
+        class_members_data = parse_json(file)
       when "classes.json"
-        classes_data = JSON.parse(file.read)
+        classes_data = parse_json(file)
       else
         flash[:alert] = "❌ Erro de processamento. Arquivo não reconhecido: #{file.original_filename}."
-        redirect_to new_admin_import_path
-        return
+        redirect_to new_admin_import_path and return
       end
     end
 
-    # Verifica se ambos os arquivos foram enviados
-    if class_members_data.nil? || classes_data.nil?
+    unless class_members_data && classes_data
       flash[:alert] = "Ambos os arquivos 'class_members.json' e 'classes.json' devem ser enviados."
-      redirect_to new_admin_import_path
-      return
+      redirect_to new_admin_import_path and return
     end
 
-    # Processa os dados dos arquivos
-    process_class_members(class_members_data, dataList)
-    process_classes(classes_data, dataList)
+    data_list = []
+    process_class_members(class_members_data, data_list)
+    process_classes(classes_data, data_list)
+    populate_database(data_list, overwrite)
 
-    debugvar = 0
-
-    if debugvar == 1
-      puts "==== Imported Data Debug ===="
-      debug_console(dataList)
-      puts "==== End Imported Data Debug ===="
-    end
-
-    # populate DB (if overwrite is on replace any match)
-    populate_database(dataList, overwrite)
-
-    # Redirect or render as needed
     redirect_to new_admin_import_path, notice: "✅ Dados importados com sucesso."
-  rescue JSON::ParserError => _
-    # Handle JSON parsing errors
+  rescue JSON::ParserError
     redirect_to new_admin_import_path, alert: "❌ Erro de processamento."
   end
 
-  def debug_console(dataList)
-    dataList.each do |subject|
-      puts "Subject: Code=#{subject.code}, Name=#{subject.name}, Department=(#{subject.department.name})"
-      subject.turmas.each do |turma|
-        puts "ClassCode=#{turma.classCode}, Semester=#{turma.semester}, Time=#{turma.time}"
-        if turma.docente && turma.docente.name.present?
-          puts "Teacher: #{turma.docente.name} (Email: #{turma.docente.email}, Matricula: #{turma.docente.matricula})"
-        end
-        if turma.alunos.any?
-          puts "|||||===||||| Enrollments |||||===|||||"
-          turma.alunos.each do |enrollment|
-            puts "Student: #{enrollment.user.name} (Email: #{enrollment.user.email}, Matricula: #{enrollment.user.matricula})"
-          end
-        end
-      end
+  private
+
+  # Parse JSON content from a file
+  def parse_json(file)
+    JSON.parse(file.read)
+  end
+
+  # Process records from classes.json
+  def process_classes(data, data_list)
+    data.each do |record|
+      subject = find_or_initialize_subject(data_list, record["code"], record["name"])
+      class_data = build_import_class(record["class"])
+      update_or_add_turma(subject, class_data)
     end
   end
 
-  def process_classes(data, dataList = [])
-    # Process records from classes.json
+  # Process records from class_members.json
+  def process_class_members(data, data_list)
     data.each do |record|
-      subjectData = ImportSubject.new
-      subjectData.code = record.dig("code")
-      subjectData.name = record.dig("name")
+      subject = find_or_initialize_subject(data_list, record["code"], nil)
+      class_data = build_import_class(record)
+      class_data.docente = build_teacher(record["docente"])
+      subject.department = ImportDepartment.new(name: record["docente"]["departamento"])
 
-      classData = ImportClass.new
-      classData.classCode = record.dig("class", "classCode")
-      classData.semester = record.dig("class", "semester")
-      classData.time = record.dig("class", "time")
-
-      # if the subject already exists only add the new classes into it
-      existing_subject = dataList.find { |d| d.code == subjectData.code }
-      if existing_subject
-        # check if it has an turma with the same classCode
-        existing_class = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
-        if existing_class
-          existing_subject.name = subjectData.name
-          existing_class.time = classData.time
-        else
-          existing_subject.add_turma(classData)
-        end
-      else
-        subjectData.add_turma(classData)
-        dataList.push(subjectData)
-      end
-    end
-  end
-
-  def process_class_members(data, dataList = [])
-    # Process records from 'class_members.json'
-    data.each do |record|
-      subjectData = ImportSubject.new
-      subjectData.code = record.dig("code")
-
-      classData = ImportClass.new
-      classData.classCode = record.dig("classCode")
-      classData.semester = record.dig("semester")
-
-      record.dig("dicente").each do |dicente|
-        userData = ImportUser.new
-        userData.name = dicente.dig("nome")
-        userData.email = dicente.dig("email")
-        userData.matricula = dicente.dig("matricula")
-        userData.highest_degree = dicente.dig("formacao")
-        userData.active_degree = dicente.dig("curso")
-
+      Array(record["dicente"]).each do |dicente|
         enrollment = ImportEnrollment.new
-        enrollment.user = userData
-        enrollment.classroom = classData
-        classData.add_alunos(enrollment)
+        enrollment.user = build_student(dicente)
+        class_data.add_alunos(enrollment)
       end
 
-      docente = record.dig("docente")
-      departmentData = ImportDepartment.new(name: docente.dig("departamento"))
-      subjectData.department = departmentData
-      userData = ImportUser.new
-      userData.name = docente.dig("nome")
-      userData.email = docente.dig("email")
-      userData.matricula = docente.dig("usuario")
-      userData.highest_degree = docente.dig("formacao")
-      userData.role = 1
-      userData.department = departmentData
-      classData.docente = userData
+      update_or_add_turma(subject, class_data)
+    end
+  end
 
-      # if the subject already exists only add the new classes into it
-      existing_subject = dataList.find { |d| d.code == subjectData.code }
-      if existing_subject
-        # check if it has an turma with the same classCode
-        existing_class = existing_subject.turmas.find { |t| t.classCode == classData.classCode }
-        if existing_class
-          existing_class.alunos = classData.alunos
-          existing_class.docente = classData.docente
-        else
-          existing_subject.add_turma(classData)
+  # Finds or creates a subject for the given code and optional name
+  def find_or_initialize_subject(data_list, code, name)
+    subject = data_list.find { |s| s.code == code }
+    if subject
+      subject.name = name if name&.present?
+    else
+      subject = ImportSubject.new.tap do |sub|
+        sub.code = code
+        sub.name = name if name&.present?
+      end
+      data_list << subject
+    end
+    subject
+  end
+
+  # Updates an existing turma or adds a new one to the subject
+  def update_or_add_turma(subject, turma)
+    existing = subject.turmas.find { |t| t.classCode == turma.classCode }
+    if existing
+      existing.time = turma.time
+      existing.docente = turma.docente if turma.docente.name.present?
+      existing.alunos = turma.alunos unless turma.alunos.empty?
+    else
+      subject.add_turma(turma)
+    end
+  end
+
+  # Builds an ImportClass instance from data
+  def build_import_class(data)
+    ImportClass.new.tap do |ic|
+      ic.classCode = data["classCode"] || data.dig("class", "classCode")
+      ic.semester  = data["semester"]  || data.dig("class", "semester")
+      ic.time      = data["time"]      || data.dig("class", "time")
+    end
+  end
+
+  # Builds an ImportUser for a teacher
+  def build_teacher(data)
+    ImportUser.new.tap do |user|
+      user.name = data["nome"]
+      user.email = data["email"]
+      user.matricula = data["usuario"]
+      user.highest_degree = data["formacao"]
+      user.role = 1
+      user.department = ImportDepartment.new(name: data["departamento"])
+    end
+  end
+
+  # Builds an ImportUser for a student
+  def build_student(data)
+    ImportUser.new.tap do |user|
+      user.name = data["nome"]
+      user.email = data["email"]
+      user.matricula = data["matricula"]
+      user.highest_degree = data["formacao"]
+      user.active_degree = data["curso"]
+    end
+  end
+
+  # Populate the database with the imported data
+  def populate_database(data_list, overwrite)
+    data_list.each do |subject|
+      department = Department.find_or_create_by(name: subject.department.name)
+      subject_record = Subject.find_or_initialize_by(code: subject.code)
+      subject_record.update(name: subject.name, department: department) if subject_record.new_record?
+
+      subject.turmas.each do |turma|
+        teacher = find_or_update_user(turma.docente, 1)
+        classroom = Classroom.find_or_initialize_by(code: turma.classCode, subject: subject_record)
+        if classroom.new_record?
+          teacher ||= User.where(role: :teacher).order("RANDOM()").first
+          classroom.update(
+            semester: turma.semester,
+            time: turma.time,
+            subject: subject_record,
+            teacher: teacher
+          )
         end
-      else
-        subjectData.add_turma(classData)
-        dataList.push(subjectData)
+        classroom.enrollments.destroy_all if overwrite
+        turma.alunos.each do |enrollment|
+          student = find_or_update_user(enrollment.user, 0)
+          Enrollment.create(user: student, classroom: classroom)
+        end
       end
     end
   end
-end
 
-def populate_database(dataList, overwrite)
-  dataList.each do |subject|
-    department = Department.find_or_create_by(name: subject.department.name)
+  # Finds or creates a user record (teacher or student) based on matricula
+  def find_or_update_user(user_data, role)
+    user = User.find_or_initialize_by(matricula: user_data.matricula)
+    user.new_record? && update_user(user, user_data, role)
+    user
+  end
 
-    subject_record = Subject.find_or_initialize_by(code: subject.code)
-    if subject_record.new_record?
-      subject_record.update(name: subject.name, department: department)
-    end
-
-    subject.turmas.each do |turma|
-      teacher = User.find_or_initialize_by(matricula: turma.docente.matricula)
-      if teacher.new_record?
-        teacher.update(nome: turma.docente.name, role: 1, password: turma.docente.password, password_confirmation: turma.docente.password, confirmed_at: Time.now, highest_degree: turma.docente.highest_degree, active_degree: turma.docente.active_degree, email: turma.docente.email)
-      end
-
-      classroom = Classroom.find_or_initialize_by(code: turma.classCode, subject: subject_record)
-      if classroom.new_record?
-        if teacher.present?
-          # TODO=options: remove nullable || create a dummy user that represents the abscence of a teacher
-          # puts "GENERATED"
-          teacher = User.where(role: :teacher).order("RANDOM()").first
-        end
-        classroom.update(semester: turma.semester, time: turma.time, subject: subject_record, teacher: teacher)
-      end
-
-      if overwrite
-        classroom.enrollments.destroy_all
-      end
-
-      turma.alunos.each do |enrollment|
-        student = User.find_or_initialize_by(matricula: enrollment.user.matricula)
-        if student.new_record?
-          student.update(nome: enrollment.user.name, role: 0, password: enrollment.user.password, password_confirmation: enrollment.user.password, confirmed_at: Time.now, highest_degree: enrollment.user.highest_degree, active_degree: enrollment.user.active_degree, email: enrollment.user.email)
-        end
-
-        Enrollment.create(user: student, classroom: classroom)
-      end
-    end
+  # Updates the user record with attributes from the import data
+  def update_user(user, user_data, role)
+    user.update(
+      nome: user_data.name,
+      role: role,
+      password: user_data.password,
+      password_confirmation: user_data.password,
+      confirmed_at: Time.now,
+      highest_degree: user_data.highest_degree,
+      active_degree: user_data.active_degree,
+      email: user_data.email
+    )
   end
 end
