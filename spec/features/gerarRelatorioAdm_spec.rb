@@ -84,6 +84,8 @@ RSpec.feature "Gerar relatório CSV para adm", type: :feature do
     # Simula o download do arquivo CSV
     download_link = find_link("Gerar Relatório CSV")[:href]
     visit download_link
+   
+
 
     # Verifica se o CSV contém a resposta esperada
     expect(page.body).to include("Qual é a capital do Brasil?,Brasília")

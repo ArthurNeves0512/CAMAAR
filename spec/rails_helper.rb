@@ -1,7 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require "spec_helper"
 require "simplecov"
-
+require "selenium-webdriver"
 # Inicia o SimpleCov para rastrear a cobertura de testes
 SimpleCov.start "rails" do
   add_filter "/bin/"
@@ -17,7 +17,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 require "devise"
-
+Capybara.javascript_driver = :selenium_chrome
 # Configuração do RSpec
 RSpec.configure do |config|
   # Configura helpers do Devise para diferentes tipos de testes
