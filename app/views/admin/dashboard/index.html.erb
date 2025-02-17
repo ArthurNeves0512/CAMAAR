@@ -7,7 +7,7 @@
   <div class="w-64">
     <%= render "layouts/sidebar" %>
   </div>
-  <!-- Conteúdo Principal (com posição relativa para o modal) -->
+  <!-- Conteúdo Principal -->
   <div class="flex flex-1 justify-center items-center relative">
     <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4 w-80">
       <% if flash[:alert] %>
@@ -24,47 +24,56 @@
     <!-- Modal para Seleção de Template e Turmas -->
     <div id="modal" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
       <div class="bg-white p-6 rounded-lg shadow-md w-[500px]">
-        <!-- Campo para o Nome do Questionário -->
-        <label class="block mb-2 font-semibold">Nome do Questionário:</label>
-        <input type="text" id="questionnaire_name" class="w-full p-2 border rounded-md" placeholder="Digite o nome do questionário">
-        <!-- Seleção de Template -->
-        <label class="block mb-2 font-semibold mt-4">Template:</label>
-        <select id="template_id" class="w-full p-2 border rounded-md">
-          <% @templates.each do |template| %>
-            <option value="<%= template.id %>"><%= template.name %></option>
-          <% end %>
-        </select>
-        <!-- Lista de Turmas em formato de tabela -->
-        <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md" id="classrooms-container">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b">
-                <th class="px-2 py-1">Nome</th>
-                <th class="px-2 py-1">Semestre</th>
-                <th class="px-2 py-1">Código</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @classrooms.each do |classroom| %>
+        <form id="questionnaire-form" method="POST" action="<%= admin_questionnaires_path %>">
+          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+          <!-- Campo para o Nome do Questionário -->
+          <label class="block mb-2 font-semibold">Nome do Questionário:</label>
+          <input type="text" id="questionnaire_name" name="name" 
+                 class="w-full p-2 border rounded-md" placeholder="Digite o nome do questionário">
+          <!-- Seleção de Template -->
+          <label class="block mb-2 font-semibold mt-4">Template:</label>
+          <select id="template_id" name="template_id" class="w-full p-2 border rounded-md">
+            <% @templates.each do |template| %>
+              <option value="<%= template.id %>"><%= template.name %></option>
+            <% end %>
+          </select>
+          <!-- Lista de Turmas -->
+          <div class="mt-4 overflow-y-auto max-h-52 border p-2 rounded-md" id="classrooms-container">
+            <table class="w-full text-left border-collapse">
+              <thead>
                 <tr class="border-b">
-                  <td class="px-2 py-1">
-                    <div class="flex items-center gap-2">
-                      <input type="checkbox" name="classrooms[]" value="<%= classroom.code %>" class="classroom-checkbox">
-                      <span><%= "Estudos Em" %></span>
-                    </div>
-                  </td>
-                  <td class="px-2 py-1"><%= classroom.semester %></td>
-                  <td class="px-2 py-1"><%= classroom.code %></td>
+                  <th class="px-2 py-1">Nome</th>
+                  <th class="px-2 py-1">Semestre</th>
+                  <th class="px-2 py-1">Código</th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-        <!-- Botões do Modal -->
-        <div class="mt-4 flex justify-between">
-          <button id="close-modal" class="bg-red-300 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-300 ease-in-out">Cancelar</button>
-          <button id="submit-form" class="bg-green-300 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors duration-300 ease-in-out">Enviar</button>
-        </div>
+              </thead>
+              <tbody>
+                <% @classrooms.each do |classroom| %>
+                  <tr class="border-b">
+                    <td class="px-2 py-1">
+                      <div class="flex items-center gap-2">
+                        <input type="checkbox" name="classroom_codes[]"
+                               value="<%= classroom.code %>" class="classroom-checkbox">
+                        <span><%= "Estudos Em" %></span>
+                      </div>
+                    </td>
+                    <td class="px-2 py-1"><%= classroom.semester %></td>
+                    <td class="px-2 py-1"><%= classroom.code %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- Botões do Modal -->
+          <div class="mt-4 flex justify-between">
+            <button type="button" id="close-modal" class="bg-red-300 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-300 ease-in-out">
+              Cancelar
+            </button>
+            <button type="submit" class="bg-green-300 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors duration-300 ease-in-out">
+              Enviar
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -72,108 +81,75 @@
 <script>
   // Abrir o modal
   document.getElementById('open-modal').addEventListener('click', function () {
-      document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal').classList.remove('hidden');
   });
 
   // Fechar o modal
   document.getElementById('close-modal').addEventListener('click', function () {
-      document.getElementById('modal').classList.add('hidden');
+    document.getElementById('modal').classList.add('hidden');
   });
 
-  // Envio do formulário via fetch
-  document.getElementById('submit-form').addEventListener('click', function () {
-    let questionnaireName = document.getElementById('questionnaire_name').value.trim();
-    let templateId = document.getElementById('template_id').value;
-    let classroomsSelecionadas = [...document.querySelectorAll('.classroom-checkbox:checked')]
-                                 .map(cb => cb.value);
+  // Validação do formulário
+  document.getElementById('questionnaire-form').addEventListener('submit', function (e) {
+    const questionnaireName = document.getElementById('questionnaire_name').value.trim();
+    const classroomsSelecionadas = document.querySelectorAll('.classroom-checkbox:checked');
 
-    // Reset the error styles
     resetErrorStyles();
 
     if (!questionnaireName) {
-        highlightError("questionnaire_name", "Digite um nome para o questionário!");
-        return;
+      highlightError("questionnaire_name", "Digite um nome para o questionário!");
+      e.preventDefault();
+      return;
     }
 
     if (classroomsSelecionadas.length === 0) {
-        highlightError("classrooms", "Selecione pelo menos uma turma!");
-        return;
+      highlightError("classrooms", "Selecione pelo menos uma turma!");
+      e.preventDefault();
+      return;
     }
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    fetch("<%= admin_questionnaires_path %>", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken
-        },
-        body: JSON.stringify({
-            name: questionnaireName,
-            template_id: templateId,
-            classroom_codes: classroomsSelecionadas
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload(); // This will automatically show the success flash in the layout
-            document.getElementById('modal').classList.add('hidden');
-        } else {
-            highlightError("general", data.message);
-        }
-    })
-    .catch(error => {
-        highlightError("general", "Erro ao criar formulários!");
-        document.getElementById('modal').classList.add('hidden');
-    });
+    // Fechar o modal após envio válido
+    document.getElementById('modal').classList.add('hidden');
   });
 
-  // Função para destacar os campos com erro
+  // Função para destacar erros
   function highlightError(field, message) {
     if (field === "questionnaire_name") {
-        const fieldElement = document.getElementById(field);
-        fieldElement.classList.add('border-red-500', 'bg-red-300');
+      const fieldElement = document.getElementById(field);
+      fieldElement.classList.add('border-red-500', 'bg-red-100');
+      alert(message);
     }
 
     if (field === "classrooms") {
-        const classroomsContainer = document.getElementById('classrooms-container');
-        classroomsContainer.classList.add('border-red-500', 'bg-red-300');
-    }
-
-    if (field === "general") {
-        alert(message); // Use alert for general errors, since these are more context-independent
+      const classroomsContainer = document.getElementById('classrooms-container');
+      classroomsContainer.classList.add('border-red-500', 'bg-red-100');
+      alert(message);
     }
   }
 
-  // Reset the error styles when the user fixes the input
+  // Resetar estilos de erro
   function resetErrorStyles() {
     const questionnaireInput = document.getElementById('questionnaire_name');
     const classroomsContainer = document.getElementById('classrooms-container');
 
-    // Reset input field styles
-    questionnaireInput.classList.remove('border-red-500', 'bg-red-300');
-    classroomsContainer.classList.remove('border-red-500', 'bg-red-300');
+    questionnaireInput.classList.remove('border-red-500', 'bg-red-100');
+    classroomsContainer.classList.remove('border-red-500', 'bg-red-100');
   }
 
-  // Reset error styles when user clicks on input fields or the classroom div
-  document.getElementById('questionnaire_name').addEventListener('click', function () {
-    resetErrorStyles();
-  });
-  document.getElementById('classrooms-container').addEventListener('click', function () {
-    resetErrorStyles();
-  });
+  // Resetar erros ao interagir com os campos
+  document.getElementById('questionnaire_name').addEventListener('click', resetErrorStyles);
+  document.getElementById('classrooms-container').addEventListener('click', resetErrorStyles);
 
-  // Efeito de hover para botões com classe bg-green-300
-  document.addEventListener('DOMContentLoaded', function() {
-      const elements = document.querySelectorAll('.bg-green-300');
-      elements.forEach(element => {
-          element.addEventListener('mouseover', function() {
-              this.classList.replace('bg-green-300', 'bg-green-600');
-          });
-          element.addEventListener('mouseout', function() {
-              this.classList.replace('bg-green-600', 'bg-green-300');
-          });
+  // Efeito de hover para botões
+  document.addEventListener('DOMContentLoaded', function () {
+    const elements = document.querySelectorAll('.bg-green-300');
+    elements.forEach(element => {
+      element.addEventListener('mouseover', function () {
+        this.classList.replace('bg-green-300', 'bg-green-600');
       });
+      element.addEventListener('mouseout', function () {
+        this.classList.replace('bg-green-600', 'bg-green-300');
+      });
+    });
   });
 </script>
