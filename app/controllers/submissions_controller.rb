@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_questionnaire, only: [:create]
+  before_action :set_questionnaire, only: [ :create ]
 
   def create
     @submission = @questionnaire.submissions.build(user: current_user)

@@ -1,6 +1,5 @@
 class Users::PasswordsController < Devise::PasswordsController
-  skip_before_action :require_no_authentication, only: [:create, :update]
-  before_action :validate_session, only: [:edit]
+  skip_before_action :require_no_authentication, only: [ :create, :update ]
 
   # Sobrescreve o método create para verificar apenas o email
   def create
@@ -51,12 +50,6 @@ class Users::PasswordsController < Devise::PasswordsController
   end
 
   private
-
-  def validate_session
-    unless params[:reset_password_token].present?
-      redirect_to new_user_password_path, alert: "Token inválido ou expirado. Solicite a recuperação de senha novamente."
-    end
-  end
 
   def password_params
     params.fetch(:user, {}).permit(:password, :password_confirmation, :reset_password_token)

@@ -35,7 +35,7 @@ class ReportsController < ApplicationController
   def generate_csv(questionnaire)
     CSV.generate(headers: true) do |csv|
       # Cabeçalhos do CSV
-      csv << ["Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta"]
+      csv << [ "Resposta ID", "Nome do Usuário", "Nome do Questionário", "Pergunta", "Resposta" ]
 
       # Coleta os resultados das respostas
       results = Answer
@@ -53,7 +53,7 @@ class ReportsController < ApplicationController
 
       # Adiciona os dados ao CSV
       results.each do |result|
-        csv << [result.answer_id, result.user_name, result.questionnaire_name, result.question_text, result.answer_value]
+        csv << [ result.answer_id, result.user_name, result.questionnaire_name, result.question_text, result.answer_value ]
       end
     end
   end
