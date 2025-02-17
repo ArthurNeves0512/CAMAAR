@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Enviar formulários", type: :feature do
-RSpec.feature "Enviar formulários", type: :feature do
   background do
     # Criar um usuário admin
     user_adm = User.create!(
@@ -71,26 +70,43 @@ RSpec.feature "Enviar formulários", type: :feature do
   scenario "Enviar formulário de questionário com template e turmas selecionadas" do
     # Abrir o modal
     expect(page).to have_button("Enviar Formulários")
-    click_button "Enviar Formulários"
+    find('button[id="open-modal"]').click
+    
 
-    expect(page).to have_selector("#modal", visible: true)
+     expect(page).to have_selector("#modal", visible: true)
+    
+    within('#modal') do
+    fill_in 'questionnaire_name', with: 'Quest1'
+    select "Template 1", from: "template_id"
+    all('input[type="checkbox"]').each(&:click)
+    
+    
+    
+  end
+  click_button 'Enviar'
+  expect(page).to have_text("true")
+
+    #expect(page).to have_selector("#modal", visible: true)
 
 
     # Preencher o nome do questionário
-    fill_in "Digite o nome do questionário", with: "Questionário de Teste"
+    #fill_in "Digite o nome do questionário", with: "Questionário de Teste"
 
 
     # Selecionar um template
-    select "Template 1", from: "template_id"
+    #select "Template 1", from: "template_id"
 
     # Selecionar todas as turmas disponíveis
-    all('input[type="checkbox"]').each(&:click)
+    #all('input[type="checkbox"]').each(&:click)
 
     # Verificar se o botão está habilitado
-    expect(find_button("Enviar")[:disabled]).to be_nil
+    #expect(find_button("Enviar")[:disabled]).to be_nil
 
     # Enviar o formulário
-    click_button "Enviar"
-    #expect(page).to have_content("✅ Formulários criados com sucesso!")
+    #click_button "Enviar"
+    #save_and_open_page
+    
+
+    
   end
 end
