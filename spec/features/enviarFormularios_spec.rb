@@ -34,11 +34,11 @@ RSpec.feature "Enviar formulários", type: :feature do
     )
 
     # Criar templates com atributos obrigatórios
-    template1 = Template.create!(name: "Template 1", target_audience: "Alunos", semester: "2025/1")
-    template2 = Template.create!(name: "Template 2", target_audience: "Professores", semester: "2025/1")
+    Template.create!(name: "Template 1", target_audience: "Alunos", semester: "2025/1")
+    Template.create!(name: "Template 2", target_audience: "Professores", semester: "2025/1")
 
     # Criar turmas vinculadas a um professor e a uma disciplina
-    classroom1 = Classroom.create!(
+    Classroom.create!(
       code: "A101",
       semester: "2025/1",
       subject_id: subject.id,
@@ -46,7 +46,7 @@ RSpec.feature "Enviar formulários", type: :feature do
       time: "10:00"
     )
 
-    classroom2 = Classroom.create!(
+    Classroom.create!(
       code: "B202",
       semester: "2025/1",
       subject_id: subject.id,
@@ -90,6 +90,6 @@ RSpec.feature "Enviar formulários", type: :feature do
 
     # Enviar o formulário
     click_button "Enviar"
-    #expect(page).to have_content("✅ Formulários criados com sucesso!")
+    expect(page).to have_content("Formulários criados com sucesso")
   end
 end
