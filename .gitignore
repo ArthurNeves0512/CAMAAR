@@ -37,3 +37,4 @@
 /_IGNORE
 /config/database.yml
 /coverage
+/rubycritic-report
