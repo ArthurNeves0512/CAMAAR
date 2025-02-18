@@ -6,7 +6,7 @@ Este documento apresenta as informações referentes à Sprint 3, cujo foco foi 
 
 ## Informações do Grupo
 
-- **Repositório**: [Link para o Repositório](https://github.com/seu-repositorio)
+- **Repositório**: [Link para o Repositório](https://github.com/ArthurNeves0512/CAMAAR/tree/terceiraSprint)
 - **Integrantes**:
   - Cauã Lima  - Matrícula: 221018890
   - Mateus Lucas - Matrícula: 221000080
