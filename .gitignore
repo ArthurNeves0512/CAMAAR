@@ -38,3 +38,4 @@
 /config/database.yml
 /coverage
 /rubycritic-report
+/doc

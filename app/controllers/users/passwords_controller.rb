@@ -1,7 +1,17 @@
+# Controller responsável por gerenciar a recuperação e redefinição de senha dos usuários.
+# Este controlador substitui alguns métodos padrões do Devise para personalizar o fluxo de recuperação de senha.
 class Users::PasswordsController < Devise::PasswordsController
-  skip_before_action :require_no_authentication, only: [ :create, :update ]
+  # Pula a verificação de autenticação para as ações create e update
+  skip_before_action :require_no_authentication, only: [:create, :update]
 
   # Sobrescreve o método create para verificar apenas o email
+  #
+  # Inicia o processo de recuperação de senha verificando o e-mail do usuário e gerando um token de redefinição.
+  #
+  # @param [Hash] params Parâmetros enviados pelo formulário de recuperação de senha.
+  # @option params [String] :user[:email] O endereço de e-mail do usuário que deseja redefinir a senha.
+  #
+  # @return [Redirect] Redireciona para a página de redefinição de senha ou apresenta um alerta de erro.
   def create
     email = params.dig(:user, :email)
 
@@ -29,6 +39,13 @@ class Users::PasswordsController < Devise::PasswordsController
   end
 
   # Renderiza a tela de edição da senha
+  #
+  # Exibe o formulário de redefinição de senha se o token fornecido for válido.
+  #
+  # @param [Hash] params Parâmetros enviados com o token de redefinição.
+  # @option params [String] :reset_password_token Token gerado para redefinir a senha do usuário.
+  #
+  # @return [Redirect] Redireciona para a página de redefinição de senha se o token for válido.
   def edit
     @user = User.with_reset_password_token(params[:reset_password_token])
 
@@ -38,6 +55,15 @@ class Users::PasswordsController < Devise::PasswordsController
   end
 
   # Atualiza a senha do usuário
+  #
+  # Define a nova senha do usuário e o autentica automaticamente.
+  #
+  # @param [Hash] params Parâmetros enviados com a nova senha.
+  # @option params [String] :user[:password] A nova senha definida pelo usuário.
+  # @option params [String] :user[:password_confirmation] Confirmação da nova senha fornecida pelo usuário.
+  # @option params [String] :user[:reset_password_token] Token de redefinição de senha.
+  #
+  # @return [Redirect] Redireciona para a página inicial com uma mensagem de sucesso ou erro.
   def update
     @user = User.reset_password_by_token(password_params)
 
@@ -51,6 +77,9 @@ class Users::PasswordsController < Devise::PasswordsController
 
   private
 
+  # Filtra os parâmetros necessários para redefinir a senha
+  #
+  # @return [Hash] Parâmetros filtrados contendo as chaves :password, :password_confirmation e :reset_password_token.
   def password_params
     params.fetch(:user, {}).permit(:password, :password_confirmation, :reset_password_token)
   end
